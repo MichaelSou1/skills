@@ -1,0 +1,12 @@
+{
+  "name": "unpack",
+  "version": "1.0.0",
+  "description": "把黑话展开成人话，把压缩过的技术解释讲清楚。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/unpack",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["unpack", "explanation", "teaching"]
+}
