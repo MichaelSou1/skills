@@ -1,6 +1,6 @@
 {
   "name": "paper-reading",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "用大同行的口吻精读 CS/AI/ML 论文。",
   "author": {
     "name": "Ruihan Su",
@@ -8,5 +8,6 @@
   },
   "homepage": "https://github.com/MichaelSou1/skills/tree/main/paper-reading",
   "repository": "https://github.com/MichaelSou1/skills",
-  "keywords": ["paper-reading", "research", "machine-learning"]
+  "keywords": ["paper-reading", "research", "machine-learning"],
+  "skills": "./skills"
 }
