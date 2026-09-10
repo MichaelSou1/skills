@@ -1,0 +1,13 @@
+{
+  "name": "professor-research",
+  "version": "1.0.0",
+  "description": "从老师相关链接梳理近年研究方向，逐篇介绍 Google Scholar 当年工作；仅手动触发。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/professor-research",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["professor-research", "research", "google-scholar", "literature-review"],
+  "skills": "./skills"
+}

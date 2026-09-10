@@ -1,0 +1,5 @@
+interface:
+  display_name: "老师研究方向调研"
+  short_description: "从老师相关链接梳理近年研究方向，逐篇介绍 Scholar 当年工作"
+policy:
+  allow_implicit_invocation: false

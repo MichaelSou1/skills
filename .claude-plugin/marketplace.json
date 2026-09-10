@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "michaelsou-skills",
-  "description": "Personal Claude skills collection: paper reading and unpack explanations.",
+  "description": "Personal Claude skills collection: paper reading, professor research, and unpack explanations.",
   "owner": {
     "name": "Ruihan Su",
     "url": "https://github.com/MichaelSou1"
@@ -34,6 +34,20 @@
       "homepage": "https://github.com/MichaelSou1/skills/tree/main/unpack",
       "strict": false,
       "skills": ["./skills/unpack"]
+    },
+    {
+      "name": "professor-research",
+      "source": "./professor-research",
+      "description": "手动调研老师近年来的研究方向，并逐篇用几句话介绍 Google Scholar 上今年的工作。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/professor-research",
+      "strict": false,
+      "skills": ["./skills/professor-research"]
     }
   ]
 }
