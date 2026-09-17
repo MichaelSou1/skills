@@ -1,0 +1,18 @@
+{
+  "name": "write-experiment-plan",
+  "version": "1.0.0",
+  "description": "将具体机器学习实验想法落实为数据与模型选型、GPU 并行安排、代码实施步骤和结果分析计划。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/write-experiment-plan",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": [
+    "experiments",
+    "research",
+    "gpu",
+    "planning"
+  ],
+  "skills": "./skills"
+}

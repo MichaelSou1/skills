@@ -1,0 +1,3 @@
+interface:
+  display_name: "写实验计划"
+  short_description: "将具体实验想法落实为数据模型选型、GPU并行安排和可执行实验计划"

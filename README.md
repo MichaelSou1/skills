@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack` 和 `professor-research`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research` 和 `write-experiment-plan`。
 
 ## professor-research
 
@@ -56,4 +56,41 @@ Claude Code 的手动触发设置位于 `SKILL.md` 的 `disable-model-invocation
 
 ```
 /install-skill https://github.com/MichaelSou1/skills/tree/main/unpack
+```
+
+
+## write-experiment-plan（写实验计划）
+
+将具体机器学习实验想法整理为可接手实施的实验计划：
+
+- 按需联网核实训练/验证/测试数据集、模型版本和下载入口。
+- 根据实时空闲显存、任务峰值与必要余量安排 GPU，尽量提高并行度，支持同卡插入任务。
+- 明确代码模块、输入输出、配置、实施依赖与验收方式。
+- 设计基线、消融、阶段步骤、结果分析和停止条件。
+
+写计划本身不自动启动长时实验；支持按请求继续实施。
+
+### Claude Code
+
+添加上面的 marketplace 后安装：
+
+```text
+/plugin install write-experiment-plan@michaelsou-skills
+```
+
+调用：
+
+```text
+/write-experiment-plan:write-experiment-plan 实验想法：…… 项目位置：…… 可用资源：……
+```
+
+### Codex
+
+调用 `$skill-installer`，指定仓库 `MichaelSou1/skills` 和技能子路径 `write-experiment-plan/skills/write-experiment-plan`。安装后可自动匹配实验计划请求，也可显式调用：
+
+```text
+$write-experiment-plan
+实验想法：……
+项目位置：……
+可用资源：……
 ```

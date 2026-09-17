@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "michaelsou-skills",
-  "description": "Personal Claude skills collection: paper reading, professor research, and unpack explanations.",
+  "description": "Personal Claude skills collection: paper reading, professor research, experiment planning, and unpack explanations.",
   "owner": {
     "name": "Ruihan Su",
     "url": "https://github.com/MichaelSou1"
@@ -19,7 +19,9 @@
       "category": "productivity",
       "homepage": "https://github.com/MichaelSou1/skills/tree/main/paper-reading",
       "strict": false,
-      "skills": ["./skills/paper-reading"]
+      "skills": [
+        "./skills/paper-reading"
+      ]
     },
     {
       "name": "unpack",
@@ -33,7 +35,9 @@
       "category": "productivity",
       "homepage": "https://github.com/MichaelSou1/skills/tree/main/unpack",
       "strict": false,
-      "skills": ["./skills/unpack"]
+      "skills": [
+        "./skills/unpack"
+      ]
     },
     {
       "name": "professor-research",
@@ -47,7 +51,25 @@
       "category": "productivity",
       "homepage": "https://github.com/MichaelSou1/skills/tree/main/professor-research",
       "strict": false,
-      "skills": ["./skills/professor-research"]
+      "skills": [
+        "./skills/professor-research"
+      ]
+    },
+    {
+      "name": "write-experiment-plan",
+      "source": "./write-experiment-plan",
+      "description": "将具体机器学习实验想法落实为数据与模型选型、GPU 并行安排、代码实施步骤和结果分析计划。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/write-experiment-plan",
+      "strict": false,
+      "skills": [
+        "./skills/write-experiment-plan"
+      ]
     }
   ]
 }
