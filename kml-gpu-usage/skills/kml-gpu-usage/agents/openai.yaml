@@ -1,0 +1,6 @@
+interface:
+  display_name: "KML 机器 GPU 使用"
+  short_description: "核对 KML 多节点 H100 资源、优化训练吞吐与共享盘通信瓶颈"
+  default_prompt: "使用 $kml-gpu-usage 核对本次 KML 资源，定位训练瓶颈并实施任务范围内的优化。"
+policy:
+  allow_implicit_invocation: true

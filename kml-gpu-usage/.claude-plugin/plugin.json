@@ -1,0 +1,13 @@
+{
+  "name": "kml-gpu-usage",
+  "version": "1.0.0",
+  "description": "KML 机器 GPU 使用：核对多节点 H100 资源，部署、调度并优化训练或推理吞吐。支持用户显式调用与模型自动匹配。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/kml-gpu-usage",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["kml", "gpu", "h100", "distributed-training", "performance", "nccl"],
+  "skills": "./skills"
+}

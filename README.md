@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research` 和 `write-experiment-plan`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research`、`write-experiment-plan` 和 `kml-gpu-usage`。
 
 ## professor-research
 
@@ -94,3 +94,39 @@ $write-experiment-plan
 项目位置：……
 可用资源：……
 ```
+
+
+## kml-gpu-usage（KML 机器 GPU 使用）
+
+适用于每节点八张 H100、多节点、共享挂载盘的 KML 作业；节点数、地址、网卡和软件版本由每次训练记录核对。帮助 Agent 完成 GPU 资源准入、部署、训练/推理吞吐优化与 NCCL/IO 排障，并验证训练语义、真实成本和恢复能力。
+
+- 主入口：[SKILL.md](kml-gpu-usage/skills/kml-gpu-usage/SKILL.md)。
+- 按需参考：部署与共享盘、精度/算子/并行、NCCL/网络、官方文档/论文/社区来源。
+- 只读脚本 `scripts/node_snapshot.py` 在目标 Linux 节点采集资源与当前解释器元数据，不导入 torch、不初始化 CUDA、不运行 benchmark。
+- 支持用户显式调用和模型按 KML GPU 任务自动匹配。调用 skill 本身不授权额外训练或资源消耗；已有任务授权按上下文继续。
+
+### Claude Code
+
+```text
+/plugin marketplace add MichaelSou1/skills
+/plugin install kml-gpu-usage@michaelsou-skills
+/kml-gpu-usage:kml-gpu-usage 检查本次 KML 资源并优化这个训练作业。
+```
+
+保留 Claude 的默认调用策略，未设置 `disable-model-invocation: true` 或 `user-invocable: false`，因此用户与模型均可触发。
+
+### Codex
+
+调用 `$skill-installer`，指定仓库 `MichaelSou1/skills`、技能子路径 `kml-gpu-usage/skills/kml-gpu-usage`。安装后在下一轮使用：
+
+```text
+$kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围内的优化。
+```
+
+也可用自然语言提出 KML GPU 部署、调度、提速或排障请求，让模型自动选择。`agents/openai.yaml` 显式设置 `policy.allow_implicit_invocation: true`。
+
+### 其他 Agent / 独立包
+
+下载 [kml-gpu-usage 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-gpu-usage-v1.0.0/kml-gpu-usage-1.0.0.zip) 和同一 Release 中的 SHA256 文件。ZIP 根目录是 `kml-gpu-usage/`，直接包含 `SKILL.md`、`agents/`、`references/` 和 `scripts/`，不要求 Claude 插件系统。
+
+将整个目录放入目标 Agent 的 skill 发现路径；保留相对目录结构。用户显式调用与模型自动选择的入口取决于该 Agent 的 skill 加载机制。该包不包含运行记录的固定节点/IP/SSH 密钥、资源快照或私有模型数据。

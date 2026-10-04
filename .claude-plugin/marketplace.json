@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "michaelsou-skills",
-  "description": "Personal Claude skills collection: paper reading, professor research, experiment planning, and unpack explanations.",
+  "description": "Personal skills collection for Claude and Codex: research, experiment planning, KML GPU usage, and clear explanations.",
   "owner": {
     "name": "Ruihan Su",
     "url": "https://github.com/MichaelSou1"
@@ -69,6 +69,22 @@
       "strict": false,
       "skills": [
         "./skills/write-experiment-plan"
+      ]
+    },
+    {
+      "name": "kml-gpu-usage",
+      "source": "./kml-gpu-usage",
+      "description": "KML 机器 GPU 使用：核对多节点 H100 资源，部署、调度并优化训练或推理吞吐。支持用户显式调用与模型自动匹配。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "development",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/kml-gpu-usage",
+      "strict": false,
+      "skills": [
+        "./skills/kml-gpu-usage"
       ]
     }
   ]
