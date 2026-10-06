@@ -11,6 +11,16 @@ Personal skills collection for Claude and Codex.
 
 识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research`、`write-experiment-plan` 和 `kml-gpu-usage`。
 
+## paper-reading（论文精读）
+
+用大同行的口吻分段精读 CS/AI/ML 论文，先讲动机，再讲方法、实验和局限。
+
+- 公式里的字母首次出现时，说明它在当前公式中的具体意义。
+- 讲解方法时尽量用具体例子走通输入、关键操作和输出，区分原文例子与教学简化。
+- 在适合的机制处穿插图示或交互演示。
+- 主入口：[SKILL.md](paper-reading/skills/paper-reading/SKILL.md)。Codex 可用 `$skill-installer` 安装此子路径；Claude 可用 `/plugin install paper-reading@michaelsou-skills` 安装。
+- 独立包：[paper-reading 1.1.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/paper-reading-v1.1.0/paper-reading-1.1.0.zip)，校验文件位于同一 Release。ZIP 根目录为 `paper-reading/`，直接包含 `SKILL.md`。
+
 ## professor-research
 
 给一个老师相关链接（个人主页、院系介绍、Google Scholar 或论文页），调研近年来的研究方向，并逐篇用两三句话介绍 Scholar 上今年的工作。

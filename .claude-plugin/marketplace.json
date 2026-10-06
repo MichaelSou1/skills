@@ -11,7 +11,7 @@
       "name": "paper-reading",
       "source": "./paper-reading",
       "description": "用大同行的口吻精读 CS/AI/ML 论文。当用户说「精读论文」「帮我读这篇 paper」「讲讲这篇论文」或使用 /paper-reading 时触发。",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"
