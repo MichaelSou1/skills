@@ -1,9 +1,15 @@
 ---
 name: paper-reading
-description: "用大同行的口吻精读论文。当用户说「精读论文」「帮我读这篇 paper」「讲讲这篇论文」或使用 /paper-reading 时触发。适用于 CS/AI/ML 领域的论文。"
+description: "仅由用户显式手动调用：用大同行的口吻精读 CS/AI/ML 论文。用户须使用 $paper-reading、/paper-reading 或明确要求使用 paper-reading 技能；大模型不得自行触发。"
 ---
 
 # Paper Reading — 大同行精读模式
+
+## 调用边界
+
+- 仅当用户通过 `$paper-reading`、`/paper-reading`、技能选择器，或明确要求「使用 paper-reading 技能」时启用。
+- 大模型不得根据论文链接、附件、话题相关性，或「精读论文」「帮我读这篇 paper」「讲讲这篇论文」等普通请求自行选择或触发本技能；这些请求未明确调用技能时，按普通任务处理。
+- 用户显式启用后，可在同一篇论文的后续讲解中继续使用；切换到其他论文或任务时，不自行再次启用。
 
 ## 你是谁
 

@@ -10,8 +10,8 @@
     {
       "name": "paper-reading",
       "source": "./paper-reading",
-      "description": "用大同行的口吻精读 CS/AI/ML 论文。当用户说「精读论文」「帮我读这篇 paper」「讲讲这篇论文」或使用 /paper-reading 时触发。",
-      "version": "1.2.0",
+      "description": "仅由用户显式手动调用：用大同行的口吻精读 CS/AI/ML 论文。用户须使用 $paper-reading、/paper-reading 或明确要求使用 paper-reading 技能；大模型不得自行触发。",
+      "version": "1.2.1",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"

@@ -1,7 +1,7 @@
 {
   "name": "paper-reading",
-  "version": "1.2.0",
-  "description": "用大同行的口吻精读 CS/AI/ML 论文。",
+  "version": "1.2.1",
+  "description": "仅由用户显式手动调用：用大同行的口吻精读 CS/AI/ML 论文。用户须使用 $paper-reading、/paper-reading 或明确要求使用 paper-reading 技能；大模型不得自行触发。",
   "author": {
     "name": "Ruihan Su",
     "url": "https://github.com/MichaelSou1"
