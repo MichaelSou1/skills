@@ -75,7 +75,7 @@
       "name": "kml-gpu-usage",
       "source": "./kml-gpu-usage",
       "description": "KML 机器 GPU 使用：核对多节点 H100 资源，部署、调度并优化训练或推理吞吐。支持用户显式调用与模型自动匹配。",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"
@@ -91,7 +91,7 @@
       "name": "open-workspace",
       "source": "./open-workspace",
       "description": "仅用户手动触发：为论文复现或研究想法建立工作区、通用AGENTS、私有GitHub仓库，并按需部署服务器与专属读写deploy key。",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"

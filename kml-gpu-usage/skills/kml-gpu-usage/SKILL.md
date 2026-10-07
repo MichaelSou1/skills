@@ -30,7 +30,15 @@ description: "KML 机器 GPU 使用：核对多节点 H100 资源，部署、调
 - 可在每个目标节点用实际项目 Python 执行 [scripts/node_snapshot.py](scripts/node_snapshot.py)。它仅查询资源和当前解释器的包元数据，不导入 torch、不初始化 CUDA、不运行 benchmark、不修改配置；输出保存在项目运行目录。检查失败的字段按 unknown 处理。
 - 核对每节点 GPU UUID、空闲显存、Fabric、GPU/NIC/NUMA 拓扑、RDMA link layer、容器 CPU/RAM 配额、共享挂载和实际项目环境。随后按执行任务需要做 CUDA/通信 correctness smoke；资源快照不代替它们。
 - 已允许资源中，实时空闲显存能容纳新增任务峰值与必要余量时可以共享 GPU，不要求整卡或整节点空闲。没有测过峰值时先保守估算并做短 profile；还要评估共驻对算力、IO 和通信的影响。
-- 保持其他作业；只管理本作业进程。容器 PID 与 NVML 驱动 PID 可能不同，不直接用 `nvidia-smi` 的 PID 做 kill。Fabric/驱动/宿主网络问题交给平台处理。
+- 保持其他实际作业；只管理本作业进程，以及下节用户明确授权可停止的占卡程序。容器 PID 与 NVML 驱动 PID 可能不同，不直接用 `nvidia-smi` 的 PID 做 kill。Fabric/驱动/宿主网络问题交给平台处理。
+
+## 用户授权可停止的占卡程序
+
+- 共享程序入口为 `/mmu_vlm_hdd/home/rhsu/idle-job-can-kill-anytime/idle-job`。它在空闲 GPU 上运行可抢占负载，按当前训练实例自动发现节点；PID、暂停标记和训练预约按实例隔离。先核对目标 launcher、运行记录和程序实际状态，不沿用旧别名、固定卡数或历史启用状态。
+- **用户已授权 Agent 在执行训练、推理、评测、CUDA smoke、调试或 GPU profile 前，直接停止当前实例的该占卡程序，无需再次确认。** 这项授权不包括终止其他真实作业，也不扩大本项目 GPU 使用权限。纯资源调查或创建工作区只查询已有状态，不切换占卡状态。
+- 在目标实例的 launcher 执行该入口的 `status` 和 `stop`，确认本程序的所有节点均无存活占卡子进程、相关显存已释放，再按项目准入要求启动任务。可用 `run --` 包装项目已验证的前台命令，使训练准备与执行期间保持预约；仅提交后台任务的命令应先 `stop` 并保持暂停。
+- 不要仅杀单个 CUDA 子进程：守护可能重新拉起它；不全局 `pkill`，不根据驱动 PID 直接 kill。停止失败、实例不匹配或状态未知时，继续诊断，不带着占卡负载启动 GPU 任务。仅在确认本次所有 GPU 作业结束、此前该实例确已启用时恢复 `start`；不因加载本技能而首次部署或启用占卡。
+- 操作与验收细节见 [占卡程序协调](references/deployment.md#占卡程序与正式任务的协调)；现场以共享程序的 `AGENTS.md`、`README.md` 和 CLI 行为为准。
 
 ## 用证据选择优化
 

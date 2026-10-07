@@ -36,6 +36,14 @@ KML 必须读取并应用本环境可用的 `kml-gpu-usage` 技能，按需读�
 
 AGENTS 的 KML 约定必须要求负责 GPU 工作的代理应用 `kml-gpu-usage`，按实测峰值加余量准入、记录节点/卡号/端口、保护其他作业和系统驱动、统计实际预留 GPUh。具体卡数、训练拓扑和预算由新项目实测和用户决定。
 
+### KML 占卡程序写入新 AGENTS
+
+若目标服务器确为 KML，在模板 KML 段中写入共享入口 `/mmu_vlm_hdd/home/rhsu/idle-job-can-kill-anytime/idle-job`，保留用户已授权 Agent 在执行 GPU 任务前直接停止当前实例、无需再次确认的规则。生成的 AGENTS 必须包含 launcher 执行位置、`status` / `stop`、前台 `run --`、停止后验收、实例隔离、保护真实作业及子进程可能被守护重新拉起的说明；不复制 kml-1007、旧 record 或固定卡数。
+
+初始化时仅检查程序路径和本实例已有 manifest/status 的启用状态，把带时间摘要填入 `kml_idle_job_status`。优先读取已有元数据；未部署、未登记、无权限或查询失败如实填入，不为调查执行 `discover`、`start`、`stop` 或 `run`，也不安装占卡依赖。未来 GPU 任务按 `kml-gpu-usage` 的占卡协调流程处理。
+
+非 KML 或没有指定远端时删除整个模板 KML 块及其状态占位符；不把这条本机 KML 约定写给其他服务器。创建工作区本身不消耗额外 GPU 资源，不因补充文档而改变现有占卡或训练状态。
+
 ## D. 为单个仓库配置读写 deploy key
 
 deploy key 提供 Git 传输权限，不提供 GitHub API 登录。所有 GitHub API 操作使用本机 `gh`；不将本机 `gh` token、keychain 或账号配置复制到服务器。
