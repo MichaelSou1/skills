@@ -1,0 +1,6 @@
+interface:
+  display_name: "开辟新工作区"
+  short_description: "手动建立研究工作区、通用开发约定和私有仓库，可选服务器部署与三端同步"
+  default_prompt: "使用 $open-workspace 为指定论文或 idea 建立新工作区，创建私有 GitHub 仓库；如指定服务器，核验资源并完成部署和三端同步。"
+policy:
+  allow_implicit_invocation: false

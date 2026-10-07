@@ -1,0 +1,20 @@
+{
+  "name": "open-workspace",
+  "version": "1.0.0",
+  "description": "仅用户手动触发：为论文复现或研究想法建立工作区、通用AGENTS、私有GitHub仓库，并按需部署服务器与专属读写deploy key。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/open-workspace",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": [
+    "workspace",
+    "research",
+    "github",
+    "deploy-key",
+    "ssh",
+    "manual-invocation"
+  ],
+  "skills": "./skills"
+}

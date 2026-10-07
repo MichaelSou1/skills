@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research`、`write-experiment-plan` 和 `kml-gpu-usage`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage` 和 `open-workspace`。
 
 ## paper-reading（论文精读）
 
@@ -142,3 +142,24 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 下载 [kml-gpu-usage 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-gpu-usage-v1.0.0/kml-gpu-usage-1.0.0.zip) 和同一 Release 中的 SHA256 文件。ZIP 根目录是 `kml-gpu-usage/`，直接包含 `SKILL.md`、`agents/`、`references/` 和 `scripts/`，不要求 Claude 插件系统。
 
 将整个目录放入目标 Agent 的 skill 发现路径；保留相对目录结构。用户显式调用与模型自动选择的入口取决于该 Agent 的 skill 加载机制。该包不包含运行记录的固定节点/IP/SSH 密钥、资源快照或私有模型数据。
+
+
+## open-workspace（开辟新工作区）
+
+仅用户手动调用，为论文复现或新研究想法建立本机工作区、通用 `AGENTS.md` 与私有 GitHub 仓库。指定远端服务器时，部署仓库、探查实际 GPU/worker 资源、配置该仓库专属的读写 deploy key，并核对本机、GitHub 与服务器同步。KML 采用共享盘项目路径，GPU 使用交由 `kml-gpu-usage`。
+
+- 主入口：[SKILL.md](open-workspace/skills/open-workspace/SKILL.md)。
+- Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
+- Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
+- 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
+- 独立包：[open-workspace 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.0/open-workspace-1.0.0.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。
+
+调用示例：
+
+```text
+$open-workspace
+为刚讨论的论文复现建立工作区，项目名 my-reproduction。
+远端服务器：ssh my-server。
+```
+
+省略服务器时只建立本机与 GitHub 两端；本技能不因讨论论文或 idea 自行触发，也不在开工作区时自动安装训练环境、下载数据或启动实验。
