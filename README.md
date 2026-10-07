@@ -73,14 +73,14 @@ Claude Code 的手动触发设置位于 `SKILL.md` 的 `disable-model-invocation
 
 ## write-experiment-plan（写实验计划）
 
-将具体机器学习实验想法整理为可接手实施的实验计划：
+仅用户手动调用，将具体机器学习实验想法整理为可接手实施的实验计划：
 
 - 按需联网核实训练/验证/测试数据集、模型版本和下载入口。
 - 根据实时空闲显存、任务峰值与必要余量安排 GPU，尽量提高并行度，支持同卡插入任务。
 - 明确代码模块、输入输出、配置、实施依赖与验收方式。
 - 设计基线、消融、阶段步骤、结果分析和停止条件。
 
-写计划本身不自动启动长时实验；支持按请求继续实施。
+Codex 和 Claude Code 均禁止模型自动触发本技能。写计划本身不自动启动长时实验；支持按请求继续实施。
 
 ### Claude Code
 
@@ -90,7 +90,7 @@ Claude Code 的手动触发设置位于 `SKILL.md` 的 `disable-model-invocation
 /plugin install write-experiment-plan@michaelsou-skills
 ```
 
-调用：
+手动调用：
 
 ```text
 /write-experiment-plan:write-experiment-plan 实验想法：…… 项目位置：…… 可用资源：……
@@ -98,7 +98,7 @@ Claude Code 的手动触发设置位于 `SKILL.md` 的 `disable-model-invocation
 
 ### Codex
 
-调用 `$skill-installer`，指定仓库 `MichaelSou1/skills` 和技能子路径 `write-experiment-plan/skills/write-experiment-plan`。安装后可自动匹配实验计划请求，也可显式调用：
+调用 `$skill-installer`，指定仓库 `MichaelSou1/skills` 和技能子路径 `write-experiment-plan/skills/write-experiment-plan`。安装后仅能由用户手动调用：
 
 ```text
 $write-experiment-plan
@@ -106,6 +106,8 @@ $write-experiment-plan
 项目位置：……
 可用资源：……
 ```
+
+Claude Code 的调用策略位于 `SKILL.md` 的 `disable-model-invocation: true`；Codex 的调用策略位于 `agents/openai.yaml` 的 `policy.allow_implicit_invocation: false`。普通的“写实验计划”请求不会自动触发本技能。
 
 
 ## kml-gpu-usage（KML 机器 GPU 使用）

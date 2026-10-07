@@ -58,8 +58,8 @@
     {
       "name": "write-experiment-plan",
       "source": "./write-experiment-plan",
-      "description": "将具体机器学习实验想法落实为数据与模型选型、GPU 并行安排、代码实施步骤和结果分析计划。",
-      "version": "1.0.0",
+      "description": "仅用户手动调用：将具体机器学习实验想法落实为数据与模型选型、GPU 并行安排、代码实施步骤和结果分析计划。",
+      "version": "1.0.1",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"

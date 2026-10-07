@@ -1,9 +1,12 @@
 ---
 name: write-experiment-plan
-description: 根据具体机器学习实验想法撰写可执行实验计划，按需联网核实数据集、模型和下载入口，敲定 GPU 并行资源、代码管线实施步骤、实验矩阵与结果分析。用户要求写实验计划、设计实验方案或将研究想法落实为实验时使用；不用于单纯论文解读或仅查询运行进度。
+description: 仅当用户手动调用 $write-experiment-plan、/write-experiment-plan:write-experiment-plan 或明确要求使用本技能时，将具体机器学习实验想法落实为数据与模型选型、GPU 并行安排、代码实施步骤、实验矩阵与结果分析计划。普通实验计划请求不自动触发。
+disable-model-invocation: true
 ---
 
 # 写实验计划
+
+本技能只能由用户手动调用。模型不得根据“写实验计划”“设计实验方案”等普通任务描述自行触发。Codex 通过 `agents/openai.yaml` 的 `policy.allow_implicit_invocation: false` 禁止隐式调用；Claude Code 通过 `disable-model-invocation: true` 禁止模型自动调用，保留用户手动入口。
 
 把实验想法落实为另一位 Agent 可以接手实施的计划。默认用中文，保留必要的英文标识。给出有依据的主方案和明确取舍，不止列候选清单。计划深度与实验规模匹配；不适用的训练、分布式或统计环节说明原因即可。
 
