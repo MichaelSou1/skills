@@ -18,8 +18,10 @@ Personal skills collection for Claude and Codex.
 - 公式里的字母首次出现时，说明它在当前公式中的具体意义。
 - 讲解方法时尽量用具体例子走通输入、关键操作和输出，区分原文例子与教学简化。
 - 在适合的机制处穿插图示或交互演示。
+- 作者公开数据或论文展示数据时，主动在对应环节展示可追溯的真实样例，说明字段作用、数据处理前后变化和样例来源。
+- 结合公开代码、配置与附录，用具体样例和图示讲清数据构造、训练设计及评测判分，区分论文描述、代码实现与教学简化。
 - 主入口：[SKILL.md](paper-reading/skills/paper-reading/SKILL.md)。Codex 可用 `$skill-installer` 安装此子路径；Claude 可用 `/plugin install paper-reading@michaelsou-skills` 安装。
-- 独立包：[paper-reading 1.1.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/paper-reading-v1.1.0/paper-reading-1.1.0.zip)，校验文件位于同一 Release。ZIP 根目录为 `paper-reading/`，直接包含 `SKILL.md`。
+- 独立包：[paper-reading 1.2.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/paper-reading-v1.2.0/paper-reading-1.2.0.zip)，校验文件位于同一 Release。ZIP 根目录为 `paper-reading/`，直接包含 `SKILL.md`。
 
 ## professor-research
 
