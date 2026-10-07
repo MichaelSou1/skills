@@ -44,8 +44,9 @@
 所有项目安装、缓存、临时文件和下载分片写入允许目录；不写他人目录、系统 Python、系统驱动目录或未经允许的根盘位置。
 环境入口建议为 `scripts/project_env.sh`；这是待实施约定，只有文件实际创建并验收后，才要求每个项目进程先 source 它。
 环境入口应明确项目 Python 与缓存目录，核查工具默认的 `/tmp`、用户缓存及注册文件；不修改 `HOME`，项目 Python 缺失时不能默默用系统 Python 运行实验。
-按项目要求选择隔离环境；用户要求 conda 或出现依赖冲突时，使用项目运行时根下的干净 conda prefix，成套锁定 Python、框架、wheel 和 kernel 依赖。
-使用 conda 时将 `CONDARC`、`CONDA_PKGS_DIRS`、`CONDA_ENVS_PATH` 与安装缓存导向允许目录，核查用户环境注册；多进程及 worker 核对实际 Python，避免继承其他项目的 site-packages。
+**本项目必须使用 conda 管理环境依赖**，在项目运行时根的 `envs/` 下创建隔离 conda prefix；不得以 venv、uv 环境或系统 Python 替代。确有需要时可在该 conda 环境内使用 pip 补充依赖，但仍须由同一项目 conda Python 执行。
+明确记录 conda prefix 与项目 Python 的绝对路径，成套锁定 Python、框架、wheel 和 kernel 依赖；环境尚未创建时注明待建立，不因写入本约定就自动安装环境。
+将 `CONDARC`、`CONDA_PKGS_DIRS`、`CONDA_ENVS_PATH` 与安装缓存导向允许目录，核查用户环境注册；多进程及 worker 核对实际 conda Python，避免继承其他项目的 site-packages。
 下载前核对空间、网络与版本，优先断点续传，记录 revision、清单、数量、字节数和必要校验；不把代理地址或凭据写死进仓库。
 代码、配置、锁文件、manifest、小型指标、预测、失败分析与成本记录入 Git；模型、原始大数据、checkpoint、大日志和完整批量轨迹留在运行时根。
 manifest 关联来源、精确版本、生成 commit、命令、产物位置与恢复方法，不能因产物被 ignore 就丢弃实验记录。

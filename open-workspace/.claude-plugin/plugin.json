@@ -1,6 +1,6 @@
 {
   "name": "open-workspace",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "仅用户手动触发：为论文复现或研究想法建立工作区、通用AGENTS、私有GitHub仓库，并按需部署服务器与专属读写deploy key。",
   "author": {
     "name": "Ruihan Su",
