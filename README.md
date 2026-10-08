@@ -120,7 +120,7 @@ Claude Code 的调用策略位于 `SKILL.md` 的 `disable-model-invocation: true
 - 按需参考：部署与共享盘、精度/算子/并行、NCCL/网络、官方文档/论文/社区来源。
 - 只读脚本 `scripts/node_snapshot.py` 在目标 Linux 节点采集资源与当前解释器元数据，不导入 torch、不初始化 CUDA、不运行 benchmark。
 - 支持用户显式调用和模型按 KML GPU 任务自动匹配。调用 skill 本身不授权额外训练或资源消耗；已有任务授权按上下文继续。
-- 说明共享占卡程序 `idle-job-can-kill-anytime` 的协调方式：Agent 在执行 GPU 任务前可按用户授权直接停止当前实例，核验释放，使用前台 `run --` 预约，并保持其他实例和真实作业不受影响。
+- 共享占卡程序 `idle-job-can-kill-anytime` 逐卡调度。GPU 任务优先使用 `run --gpus NODE:0,1 -- ...`，每项独立任务预约并释放自己的卡，其他空闲卡持续自动补位；保留整实例 `stop` / `run --`，保护真实作业与其他实例。
 
 ### Claude Code
 
@@ -144,20 +144,20 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 
 ### 其他 Agent / 独立包
 
-已发布独立包（1.0.0，不含本次占卡协调更新）：下载 [kml-gpu-usage 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-gpu-usage-v1.0.0/kml-gpu-usage-1.0.0.zip) 和同一 Release 中的 SHA256 文件。ZIP 根目录是 `kml-gpu-usage/`，直接包含 `SKILL.md`、`agents/`、`references/` 和 `scripts/`，不要求 Claude 插件系统。
+已发布独立包（1.0.0，不含逐卡预约更新）：下载 [kml-gpu-usage 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-gpu-usage-v1.0.0/kml-gpu-usage-1.0.0.zip) 和同一 Release 中的 SHA256 文件。ZIP 根目录是 `kml-gpu-usage/`，直接包含 `SKILL.md`、`agents/`、`references/` 和 `scripts/`，不要求 Claude 插件系统。
 
 将整个目录放入目标 Agent 的 skill 发现路径；保留相对目录结构。用户显式调用与模型自动选择的入口取决于该 Agent 的 skill 加载机制。该包不包含运行记录的固定节点/IP/SSH 密钥、资源快照或私有模型数据。
 
 
 ## open-workspace（开辟新工作区）
 
-仅用户手动调用，为论文复现或新研究想法建立本机工作区、通用 `AGENTS.md` 与私有 GitHub 仓库。生成的 `AGENTS.md` 明确要求用 conda 管理项目环境依赖；GPU 服务器空间足够时，每次训练与评测必须持久化保留所有可保存的信息，包括完整 rollout 和 judge 评分详情（若有）。指定远端服务器时，部署仓库、探查实际 GPU/worker 资源、配置该仓库专属的读写 deploy key，并核对本机、GitHub 与服务器同步。KML 采用共享盘项目路径，GPU 使用交由 `kml-gpu-usage`。远端为 KML 时，新 AGENTS 会记录共享占卡程序的路径、本实例状态、停止授权及训练前协调流程；工作区初始化仅查询已有状态。
+仅用户手动调用，为论文复现或新研究想法建立本机工作区、通用 `AGENTS.md` 与私有 GitHub 仓库。生成的 `AGENTS.md` 明确要求用 conda 管理项目环境依赖；GPU 服务器空间足够时，每次训练与评测必须持久化保留所有可保存的信息，包括完整 rollout 和 judge 评分详情（若有）。指定远端服务器时，部署仓库、探查实际 GPU/worker 资源、配置该仓库专属的读写 deploy key，并核对本机、GitHub 与服务器同步。KML 采用共享盘项目路径，GPU 使用交由 `kml-gpu-usage`。远端为 KML 时，新 AGENTS 会记录共享占卡路径、本实例状态、停止授权，以及逐卡预约、每项独立任务各自释放、未预约空闲卡自动补位的流程；工作区初始化仅查询已有状态。
 
 - 主入口：[SKILL.md](open-workspace/skills/open-workspace/SKILL.md)。
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 已发布独立包（1.0.2，不含本次占卡模板更新）：[open-workspace 1.0.2 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.2/open-workspace-1.0.2.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。
+- 已发布独立包（1.0.2，不含逐卡预约模板更新）：[open-workspace 1.0.2 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.2/open-workspace-1.0.2.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。
 
 调用示例：
 

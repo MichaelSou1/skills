@@ -44,7 +44,7 @@ disable-model-invocation: true
 1. 核实 SSH 主机身份、用户、实际实例和允许根目录。KML 默认代码路径为 `/mmu_vlm_hdd/home/rhsu/playground/<project>`，运行时为同层 `<project>-data`；其他服务器按用户已有约定和可核实的常用路径，不能猜测。
 2. 使用不覆盖远端修改的方式复制代码与 Git 历史；源代码和运行时分开，密钥通过独立私有通道处理。
 3. 核查 launcher 与本次允许的 workers，逐节点只读查询 GPU、显存、挂载及连接；将能连接且允许使用的资源写进 AGENTS，失败项标 unknown。单节点检查或 hostfile 不证明总 GPU 健康与可用。
-4. KML 资源核查与后续 GPU 安排必须应用可用的 **`kml-gpu-usage`** 技能，按其真实入口和本项目实例信息工作；把这条要求写进新 AGENTS。同时写入共享占卡入口 `/mmu_vlm_hdd/home/rhsu/idle-job-can-kill-anytime/idle-job`、本实例启用状态、实例隔离规则，以及执行 GPU 作业前的 `stop` / 前台 `run --` 操作与用户授权。工作区初始化阶段仅查询已有状态，不停止、部署或启用占卡；记录节点/卡的分配权限、核查时间和证据，不自动承诺所有 GPU 可调度。
+4. KML 资源核查与后续 GPU 安排必须应用可用的 **`kml-gpu-usage`** 技能，按其真实入口和本项目实例信息工作；把这条要求写进新 AGENTS。同时写入共享占卡入口 `/mmu_vlm_hdd/home/rhsu/idle-job-can-kill-anytime/idle-job`、本实例启用状态、实例隔离及用户停止授权。GPU 作业优先逐卡前台 `run --gpus NODE:0,1 -- ...`，独立任务各自预约并释放；保留整实例 `stop` / `run --` 的适用条件，不能默认停止整实例以阻断其他空闲卡补位。工作区初始化仅查询已有状态，不停止、部署或启用占卡；记录节点/卡的分配权限、核查时间和证据，不自动承诺所有 GPU 可调度。
 5. 本机为此仓库生成专属读写 deploy key，用本机 `gh` 注册公钥，将私钥传至远端项目运行时私有目录，配置仓库级 SSH 通道。核验无 `gh` 登录的远端 fetch/push。
 
 ## 5. 最终提交、同步与交付
