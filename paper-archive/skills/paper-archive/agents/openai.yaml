@@ -1,0 +1,5 @@
+interface:
+  display_name: "论文归档"
+  short_description: "仅手动调用：将论文精读与个人追问整理成含原图的 Notion 笔记"
+policy:
+  allow_implicit_invocation: false

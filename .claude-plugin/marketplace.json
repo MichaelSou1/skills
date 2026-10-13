@@ -102,6 +102,22 @@
       "skills": [
         "./skills/open-workspace"
       ]
+    },
+    {
+      "name": "paper-archive",
+      "source": "./paper-archive",
+      "description": "仅由用户手动调用：将论文精读与个人追问整理成含原图的 Notion 笔记，仅依赖 Notion MCP。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/paper-archive",
+      "strict": false,
+      "skills": [
+        "./skills/paper-archive"
+      ]
     }
   ]
 }

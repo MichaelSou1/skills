@@ -1,4 +1,4 @@
-﻿# Skills
+# Skills
 
 Personal skills collection for Claude and Codex.
 
@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage` 和 `open-workspace`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage` 和 `open-workspace`。
 
 ## paper-reading（论文精读）
 
@@ -168,3 +168,17 @@ $open-workspace
 ```
 
 省略服务器时只建立本机与 GitHub 两端；本技能不因讨论论文或 idea 自行触发，也不在开工作区时自动安装训练环境、下载数据或启动实验。
+
+
+## paper-archive（论文归档）
+
+仅由用户手动调用，将论文阅读讨论整理为 Notion 笔记：基础信息、按论文类型组织的主线、takeaways、个人追问与简答。尽量嵌入原论文方法图和案例截图，默认跳过实验数据图表，不添加“证据与回看入口”尾节。
+
+- 仅依赖 Notion MCP，不要求 Codex、Notion 插件或 paper-reading；按宿主实际能力处理截图和上传。
+- 主入口：[SKILL.md](paper-archive/skills/paper-archive/SKILL.md)。
+- Codex：通过 `$skill-installer` 安装仓库 `MichaelSou1/skills` 中的 `paper-archive/skills/paper-archive`，手动调用 `$paper-archive`。
+- Claude：`/plugin install paper-archive@michaelsou-skills`，手动调用 `/paper-archive:paper-archive`。
+- Claude 设置 `disable-model-invocation: true`；Codex 设置 `policy.allow_implicit_invocation: false`；其他宿主遵守技能正文中的显式调用限制。
+- 独立包：[paper-archive 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/paper-archive-v1.0.0/paper-archive-1.0.0.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `paper-archive/`，直接包含 `SKILL.md`、`agents/` 和 `references/`，可放入其他 Agent 的技能目录。
+
+调用示例：`$paper-archive 将这次论文精读归档到 Notion`。
