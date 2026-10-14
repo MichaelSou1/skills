@@ -182,3 +182,12 @@ $open-workspace
 - 独立包：[paper-archive 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/paper-archive-v1.0.0/paper-archive-1.0.0.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `paper-archive/`，直接包含 `SKILL.md`、`agents/` 和 `references/`，可放入其他 Agent 的技能目录。
 
 调用示例：`$paper-archive 将这次论文精读归档到 Notion`。
+
+## kml-ssh-proxy（KML 免密 SSH 与代理）
+
+已有别名优先直接连接，成功即停止检查；仅连接失败、别名缺失、目标绑定冲突或明确要求新建/重新配置时，进入对应流程。局部修复只验收受影响部分，避免重复核验和扩大范围。
+
+- 主入口：[SKILL.md](kml-ssh-proxy/skills/kml-ssh-proxy/SKILL.md)。
+- Codex 安装路径：`kml-ssh-proxy/skills/kml-ssh-proxy`。
+- Claude：`/plugin install kml-ssh-proxy@michaelsou-skills`。
+- 配置流程依赖本机已有的 `kml-remote-helper` 与企业 SSO；本仓库不包含该 helper。

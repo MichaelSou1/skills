@@ -1,0 +1,4 @@
+interface:
+  display_name: "KML 免密 SSH 与代理"
+  short_description: "优先复用 KML SSH 连接，按需配置或修复免密 SSH 与代理"
+  default_prompt: "使用 $kml-ssh-proxy 处理指定 KML 连接：已有别名连接成功即复用；仅失败或明确要求新建、重新配置时执行对应流程。"
