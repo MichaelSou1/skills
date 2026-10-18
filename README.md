@@ -158,7 +158,7 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 已发布独立包（1.0.2，不含逐卡预约模板更新）：[open-workspace 1.0.2 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.2/open-workspace-1.0.2.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。
+- 独立包：[open-workspace 1.0.6 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.6/open-workspace-1.0.6.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。指定服务器时，生成的 AGENTS 明确约定“推远端 = 同步服务器 + 推送 GitHub”，并验收三端 commit 一致。
 
 调用示例：
 

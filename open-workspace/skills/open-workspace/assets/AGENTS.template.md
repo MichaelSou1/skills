@@ -99,9 +99,11 @@ KML 工作区放在 `/mmu_vlm_hdd/home/rhsu/playground/{{project_name}}`，运�
 共享 checkout 只指定一个 Git 写入端；worker 使用代码期间不并发 pull、checkout 或 commit。每次实验固定 commit，多个版本使用隔离 checkout。
 如需执行未提交代码，先保存可重建补丁与配置快照；不得声称实际执行代码已由 commit 完全固定。
 新增 GitHub 仓库默认私有；复用已有仓库时核对 owner、URL 与权限，不擅自改变已有仓库可见性或 origin。
-本机使用 `gh` 管理 GitHub，账号认证与仓库凭据均不得入 Git。
+本机使用 `gh` 管理 GitHub，账号认证与仓库凭据均不得入 Git。未指定计算服务器时，仍须创建私有 GitHub 仓库、推送并核验本机 HEAD 与目标分支一致；只有用户明确排除 GitHub 建库或推送时才跳过。
 私钥、`.env`、API key、代理凭据和私有 SSH 配置不入 Git、不进日志；不以 `set -x`、`env` 或请求 headers 输出秘密。
 <!-- BEGIN REMOTE -->
+**本项目约定：推远端 = 同步服务器 + 推送 GitHub。** 用户要求“推远端”时，默认同时更新上述已指定服务器的项目 checkout 和 GitHub 目标分支；仅完成 GitHub push 不算完成。按本节同步规则执行，验收本机 HEAD、服务器 HEAD 与 GitHub 目标分支 ref 一致，并分别检查两端 working tree。用户明确限定只同步其中一端时按该范围执行；某端受阻时分别报告已完成项、阻塞原因和恢复动作，不宣布整体完成。
+
 服务器仅使用本仓库独立的读写 deploy key 进行 Git 传输，不能复制本机 `gh` token 或复用其他仓库私钥。
 deploy key 不授予 GitHub API 或账号权限。只记录 key_id、公钥 fingerprint 与配置路径，不记录私钥内容。
 服务器 Git 传输使用项目局部 SSH 配置及经验证的 known_hosts；不覆盖全局 SSH/Git，不设置 `StrictHostKeyChecking=no`。
