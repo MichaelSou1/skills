@@ -42,8 +42,11 @@ description: 配置或修复 KML 开发机、训练运行记录及指定 worker 
 ```text
 http_proxy=http://oversea-squid1.jp.txyun:11080
 https_proxy=http://oversea-squid1.jp.txyun:11080
-no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com
+no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com
+NO_PROXY=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com
 ```
+
+`.internal` 是域名后缀，使用 `internal,.internal`，不写 `*.internal`。保留现有排除项，并让 `no_proxy` 与 `NO_PROXY` 一致。直接使用 IP 的请求需单独配置 IP 或客户端支持的 CIDR。仅修改直连规则时，保持现有 HTTP/HTTPS 代理地址，只处理指定实例；配置和对照验证见 SOP 第 5–6 节。
 
 `KML_HTTP_PROXY` 控制生成的本机 SSH `SetEnv`，但远端可能不接受这些变量。还需在每台本次配置的目标实例更新 `/etc/environment` 与 `/root/.bashrc`，保留原有内容并备份；`.bashrc` 的代理块置于提前返回语句之前。用新的非交互式和交互式 SSH 会话验证。
 
@@ -69,7 +72,7 @@ no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou
 
 快速复用仅简要报告连接可用并继续任务，不补齐下述配置验收清单。以下要求用于本次新建或修改的配置；局部修复仅验收受影响的部分。
 
-使用 `BatchMode=yes`、`ControlMaster=no`、`ControlPath=none` 新建 SSH 连接，核对返回主机名与目标实例，并检查三个代理变量。密码登录不算免密完成，环境变量存在也不代表代理请求已成功；用户需要网络可用性时实际请求验证。
+使用 `BatchMode=yes`、`ControlMaster=no`、`ControlPath=none` 新建 SSH 连接，核对返回主机名与目标实例，并检查 `http_proxy`、`https_proxy`、`no_proxy` 和 `NO_PROXY`。密码登录不算免密完成，环境变量存在也不代表代理请求已成功；用户需要网络可用性时实际请求验证。
 
 含 worker 的 launcher 配置需全部 worker 和快捷名称通过验收。失败实例明确报告原因，不能将整组标记为成功。
 

@@ -1,6 +1,6 @@
 {
   "name": "kml-ssh-proxy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "KML 免密 SSH 与自动代理：已有连接快速复用，成功即停止检查；仅在失败或新建、重新配置时按需排障与验收。",
   "author": {
     "name": "Ruihan Su",

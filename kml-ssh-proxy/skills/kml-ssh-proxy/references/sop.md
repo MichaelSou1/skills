@@ -1,6 +1,6 @@
 # KML 本机免密 SSH 与自动海外代理 SOP
 
-适用工具：`/Users/suruihan/dev/kml-remote-helper`。本文根据实际配置整理，更新于 2026-10-14。
+适用工具：`/Users/suruihan/dev/kml-remote-helper`。本文根据实际配置整理，更新于 2026-10-18。
 
 目标：使用 `ssh kml-<name>` 登录指定开发机或训练实例，并在新 SSH 会话中自动设置海外代理。
 
@@ -18,7 +18,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=30 kml-<name> hostname
 
 ```bash
 ssh -o BatchMode=yes -o ConnectTimeout=30 kml-<name> \
-  'hostname; printenv http_proxy https_proxy no_proxy'
+  'hostname; printenv http_proxy https_proxy no_proxy NO_PROXY'
 ```
 
 需要访问网络时，以任务中的实际请求验证即可，不额外重复探测。代理变量缺失不等于 SSH 失败，只处理代理部分。
@@ -186,26 +186,40 @@ export KML_TARGET_PORT='21048'
 
 ## 5. 在目标实例配置自动代理
 
-代理固定为：
+新建配置使用以下默认值；已有实例仅修改直连规则时保留代理地址：
 
 ```bash
 export http_proxy=http://oversea-squid1.jp.txyun:11080
 export https_proxy=http://oversea-squid1.jp.txyun:11080
-export no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com
+export no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com
+export NO_PROXY="$no_proxy"
 ```
 
-每台目标实例分别配置。以下脚本在远端以 root 执行，可通过已经可用的 SSH 或该实例自己的 WebShell 执行。它备份并更新 `/etc/environment`，在 `/root/.bashrc` 的提前返回语句之前加入代理设置：
+只配置本次指定的实例。先读取环境与两个配置文件，合并已有的 `no_proxy` / `NO_PROXY` 排除项。下方脚本从当前环境保留代理地址和排除项；若文件中还有未加载的自定义项，先加入 `values`。检查旧代理赋值的位置，清理已确认的重复赋值，避免后续覆盖。复杂条件或动态赋值应按原意手动合并。
+
+以下脚本在远端以 root 执行，可通过已经可用的 SSH 或该实例自己的 WebShell 执行。它备份并更新 `/etc/environment`，在 `/root/.bashrc` 的提前返回语句之前加入代理设置：
 
 ```bash
 python3 - <<'PY'
 from pathlib import Path
 import re
+import os
+import shlex
 
 values = {
     'http_proxy': 'http://oversea-squid1.jp.txyun:11080',
     'https_proxy': 'http://oversea-squid1.jp.txyun:11080',
-    'no_proxy': 'localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com',
+    'no_proxy': 'localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,corp.kuaishou.com,test.gifshow.com,staging.kuaishou.com',
 }
+for key in ('http_proxy', 'https_proxy'):
+    values[key] = os.environ.get(key) or values[key]
+items = []
+for source in (os.environ.get('no_proxy', ''), os.environ.get('NO_PROXY', ''), values['no_proxy']):
+    for item in source.split(','):
+        item = item.strip()
+        if item and item not in items:
+            items.append(item)
+values['no_proxy'] = values['NO_PROXY'] = ','.join(items)
 def backup(path, original):
     dest = Path(str(path) + '.before-kml-proxy')
     if not dest.exists():
@@ -226,7 +240,9 @@ backup(path, original)
 start, end = '# >>> kml-proxy', '# <<< kml-proxy'
 original = re.sub(r'(?ms)^' + re.escape(start) + r'\n.*?^' +
                   re.escape(end) + r'\n?', '', original)
-block = '\n'.join([start] + [f'export {k}={v}' for k, v in values.items()] + [end, ''])
+# 仅移除独占一行的简单赋值；执行前已确认这些旧值已合并。
+original = re.sub(r'(?m)^(?:export\s+)?(?:http_proxy|https_proxy|no_proxy|NO_PROXY)=[^\n]*\n?', '', original)
+block = '\n'.join([start] + [f'export {k}={shlex.quote(v)}' for k, v in values.items()] + [end, ''])
 path.write_text(block + original)
 PY
 ```
@@ -240,10 +256,10 @@ PY
 ```bash
 ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none \
   -o ConnectTimeout=30 kml-<name> \
-  'hostname; whoami; printenv http_proxy https_proxy no_proxy'
+  'hostname; whoami; printenv http_proxy https_proxy no_proxy NO_PROXY'
 ```
 
-验收条件：公钥登录成功、不要求密码；`hostname` 与目标实例一致；三个代理变量与第 5 节完全一致。交互式登录也检查一次 `echo "$http_proxy"`。
+验收条件：公钥登录成功、不要求密码；`hostname` 与目标实例一致；HTTP/HTTPS 代理地址符合预期，`no_proxy` 与 `NO_PROXY` 一致且包含原有排除项与 `internal,.internal`。交互式 shell 也检查这四个变量，确认后续启动文件未覆盖设置。
 
 **新建或重新配置含 worker 的整组 launcher 连接时，还必须通过 launcher 到全部 worker 的验收。** 在 launcher 上执行以下命令，并将名称列表替换为该记录全部 worker：
 
@@ -259,6 +275,14 @@ done
 再逐台验证配置的 `gpuN` 快捷名称。每次必须使用新连接；全部返回正确主机名且无需密码才算完成。若某个 worker 已故障或无法通过 WebShell 配置，应明确列出该实例和失败原因，不将整组连接标记为已完成。
 
 若要确认代理网络可用，可在远端执行 `curl -I --connect-timeout 10 --max-time 20 https://huggingface.co`。环境变量存在只证明已配置，网络连通性以实际请求为准。
+
+### 6.1 修改 `.internal` 直连规则后的对照验证
+
+在新的 SSH 会话中运行 curl 对照测试：用临时本地 HTTP 服务监听 `127.0.0.1` 的随机端口，以 `--resolve` 将一个 `.internal` 测试域名映射到该服务。命令显式指定不可用的本地代理，例如 `--proxy http://127.0.0.1:1`（先确认该端口未监听），保留会话中的 `no_proxy` / `NO_PROXY`，不传 `--noproxy`。
+
+`.internal` 请求应直接返回本地服务响应。换成不在排除列表中的普通域名，使用同样的映射和代理，应出现代理连接失败。请求设置 `--max-time 5`，测试结束关闭临时服务。该对照证明 curl 按域名分流；内部 DNS、实际业务服务和其他客户端需以用户所用客户端的真实请求验证。
+
+`.internal` 是域名后缀，不是 IP 网段。curl 支持该后缀匹配，不使用 `*.internal`；直接通过 IP 访问时需单独列出 IP 或客户端支持的 CIDR。参见 [curl 代理环境变量说明](https://github.com/curl/everything-curl/blob/master/usingcurl/proxies/env.md)。
 
 ## 7. 持久运行与故障处理
 

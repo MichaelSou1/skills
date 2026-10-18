@@ -192,3 +192,6 @@ $open-workspace
 - Codex 安装路径：`kml-ssh-proxy/skills/kml-ssh-proxy`。
 - Claude：`/plugin install kml-ssh-proxy@michaelsou-skills`。
 - 配置流程依赖本机已有的 `kml-remote-helper` 与企业 SSO；本仓库不包含该 helper。
+
+- KML 代理默认排除 `internal,.internal`，同步 `no_proxy` 与 `NO_PROXY`；保留原有排除项，并提供 curl 直连对照验证。
+- 独立包：[kml-ssh-proxy 1.0.1 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-ssh-proxy-v1.0.1/kml-ssh-proxy-1.0.1.zip)，同一 Release 提供 SHA256。
