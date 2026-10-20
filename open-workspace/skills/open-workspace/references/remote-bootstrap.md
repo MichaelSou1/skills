@@ -68,6 +68,8 @@ deploy key 提供 Git 传输权限，不提供 GitHub API 登录。所有 GitHub
 
 ## E. 收尾同步
 
+新 AGENTS 必须写明及时、自主提交、推送 GitHub，并同时同步已指定服务器。后续每个可验收工作包通过必要检查后，按以下规则同步，不等待用户再次提醒；用户明确限制某一步时按该范围执行。活动作业占用共享 checkout 时暂缓改动该 checkout，保留现场并报告未同步版本与恢复动作。
+
 1. 将连接路径、资源表、credential 使用入口写入 AGENTS；私有 SSH/key 文件留运行时。若项目公开过文档，重新检查资源信息适不适合 Git 收录，不混入凭据。
 2. 选择唯一提交端。优先在 launcher 补齐 AGENTS 的真实部署/资源信息，本机审阅差异后由 launcher 提交推送，核实 deploy key 的真实写入；本机检查 clean working tree 和相同 branch，再 fetch/pull `--ff-only`。若最终提交在本机完成则反向同步，远端写入状态按实际证据报告。有修改或分叉先保留，不能强制覆盖。
 3. 比较本机 `git rev-parse HEAD`、GitHub `refs/heads/<branch>` 与远端 HEAD，并核对两端 `git status --short`；本机/远端提交应串行完成，避免竞争。

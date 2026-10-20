@@ -152,13 +152,14 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 
 ## open-workspace（开辟新工作区）
 
-仅用户手动调用，为论文复现或新研究想法建立本机工作区、通用 `AGENTS.md` 与私有 GitHub 仓库。生成的 `AGENTS.md` 明确要求用 conda 管理项目环境依赖；GPU 服务器空间足够时，每次训练与评测必须持久化保留所有可保存的信息，包括完整 rollout 和 judge 评分详情（若有）。指定远端服务器时，部署仓库、探查实际 GPU/worker 资源、配置该仓库专属的读写 deploy key，并核对本机、GitHub 与服务器同步。KML 采用共享盘项目路径，GPU 使用交由 `kml-gpu-usage`。远端为 KML 时，新 AGENTS 会记录共享占卡路径、本实例状态、停止与补位启动授权，以及逐卡预约、每项独立任务各自释放、先结束且无后续任务的卡立即占卡补位的流程，不等待整批结束；工作区初始化仅查询已有状态。
+仅用户手动调用，为论文复现或新研究想法建立本机工作区、通用 `AGENTS.md` 与私有 GitHub 仓库。生成的 `AGENTS.md` 要求每个可验收工作包通过必要检查后，及时、自主提交并推送 GitHub；指定远端服务器时同时同步服务器，不等待用户另行提醒。它还明确要求用 conda 管理项目环境依赖；GPU 服务器空间足够时，每次训练与评测必须持久化保留所有可保存的信息，包括完整 rollout 和 judge 评分详情（若有）。指定远端服务器时，部署仓库、探查实际 GPU/worker 资源、配置该仓库专属的读写 deploy key，并核对本机、GitHub 与服务器同步。KML 采用共享盘项目路径，GPU 使用交由 `kml-gpu-usage`。远端为 KML 时，新 AGENTS 会记录共享占卡路径、本实例状态、停止与补位启动授权，以及逐卡预约、每项独立任务各自释放、先结束且无后续任务的卡立即占卡补位的流程，不等待整批结束；工作区初始化仅查询已有状态。
 
 - 主入口：[SKILL.md](open-workspace/skills/open-workspace/SKILL.md)。
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 独立包：[open-workspace 1.0.6 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.6/open-workspace-1.0.6.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。指定服务器时，生成的 AGENTS 明确约定“推远端 = 同步服务器 + 推送 GitHub”，并验收三端 commit 一致。
+- 仓库版本：1.0.7，包含自主提交、推送与服务器同步规则。
+- 上次发布的独立包：[open-workspace 1.0.6 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.6/open-workspace-1.0.6.zip)，该包尚不包含 1.0.7 的自主同步更新，请从上述仓库子路径安装新版；同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`。指定服务器时，生成的 AGENTS 明确约定“推远端 = 同步服务器 + 推送 GitHub”，并验收三端 commit 一致。
 
 调用示例：
 

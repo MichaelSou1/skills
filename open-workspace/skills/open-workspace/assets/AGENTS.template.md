@@ -94,6 +94,9 @@ KML 工作区放在 `/mmu_vlm_hdd/home/rhsu/playground/{{project_name}}`，运�
 
 ## 3. Git、同步与凭据
 
+本项目要求及时、自主地提交并推送 GitHub。每个可验收工作包完成并通过必要检查后，审阅 diff，用明确路径提交本次改动，随后推送目标分支；不等待用户再次要求“提交”或“推送”，不把仅本地提交作为交付终点。
+用户明确要求“暂不提交”“不推送”“仅本地”或只更新某一端时，按该范围执行。同步遵守本节快进、单写入端和活动作业保护规则；遇到分叉、未审阅修改、活动作业占用共享 checkout 或连接失败时，保留现场并报告阻塞，不覆盖修改或打断作业。自主 Git 同步不扩大数据下载、API 调用、训练或评测的授权。
+
 开始修改前确认 branch 与 working tree，并 `git fetch origin`；提交、推送前再次核对远端变化，只做可确认的快进同步。
 出现分叉或另一端未提交修改时保存 diff 并消解，不强推，不用 `reset --hard`、`clean -fd` 丢弃未审阅修改。
 共享 checkout 只指定一个 Git 写入端；worker 使用代码期间不并发 pull、checkout 或 commit。每次实验固定 commit，多个版本使用隔离 checkout。
@@ -102,7 +105,7 @@ KML 工作区放在 `/mmu_vlm_hdd/home/rhsu/playground/{{project_name}}`，运�
 本机使用 `gh` 管理 GitHub，账号认证与仓库凭据均不得入 Git。未指定计算服务器时，仍须创建私有 GitHub 仓库、推送并核验本机 HEAD 与目标分支一致；只有用户明确排除 GitHub 建库或推送时才跳过。
 私钥、`.env`、API key、代理凭据和私有 SSH 配置不入 Git、不进日志；不以 `set -x`、`env` 或请求 headers 输出秘密。
 <!-- BEGIN REMOTE -->
-**本项目约定：推远端 = 同步服务器 + 推送 GitHub。** 用户要求“推远端”时，默认同时更新上述已指定服务器的项目 checkout 和 GitHub 目标分支；仅完成 GitHub push 不算完成。按本节同步规则执行，验收本机 HEAD、服务器 HEAD 与 GitHub 目标分支 ref 一致，并分别检查两端 working tree。用户明确限定只同步其中一端时按该范围执行；某端受阻时分别报告已完成项、阻塞原因和恢复动作，不宣布整体完成。
+**本项目要求在提交并推送 GitHub 时，同时自主同步上述已指定服务器的项目 checkout，不等待用户另行要求。推远端 = 同步服务器 + 推送 GitHub。** 用户要求“推远端”时同样更新两端；仅完成 GitHub push 不算完成。按本节同步规则执行，验收本机 HEAD、服务器 HEAD 与 GitHub 目标分支 ref 一致，并分别检查两端 working tree。用户明确限定只同步其中一端时按该范围执行；某端受阻时分别报告已完成项、未同步项、阻塞原因和恢复动作，不宣布整体完成。
 
 服务器仅使用本仓库独立的读写 deploy key 进行 Git 传输，不能复制本机 `gh` token 或复用其他仓库私钥。
 deploy key 不授予 GitHub API 或账号权限。只记录 key_id、公钥 fingerprint 与配置路径，不记录私钥内容。
