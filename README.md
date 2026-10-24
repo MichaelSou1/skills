@@ -207,6 +207,7 @@ $open-workspace
 - **避免过度纠结细枝末节**：按研究阶段（构思期 vs 落地方案期）与问题重要性（致命伤 vs 局部参数/边缘情况）合理分配分析深度。
 - **从反复质疑转向建设性解决问题**：区分根本性缺陷与局部不足，遵循“最小改动原则”提供可执行改进方案，禁止对已解决的问题翻旧账，每轮收敛出核心待解问题与下一步工作。
 - 主入口：[SKILL.md](gpt-progressive-research/skills/gpt-progressive-research/SKILL.md)。支持用户显式调用与模型在科研讨论中自动匹配。
+- 独立包：[gpt-progressive-research 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/gpt-progressive-research-v1.0.0/gpt-progressive-research-1.0.0.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `gpt-progressive-research/`，直接包含 `SKILL.md` 和 `agents/`，可放入其他 Agent 的技能目录。
 
 ### Claude Code
 
