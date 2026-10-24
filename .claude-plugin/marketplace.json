@@ -134,6 +134,22 @@
       "skills": [
         "./skills/kml-ssh-proxy"
       ]
+    },
+    {
+      "name": "gpt-progressive-research",
+      "source": "./gpt-progressive-research",
+      "description": "渐进式与建设性科研推进：拓展 idea 增量价值、深度检查创新性、避免过度纠结细枝末节，并优先提供最小改动的建设性解决方案。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/gpt-progressive-research",
+      "strict": false,
+      "skills": [
+        "./skills/gpt-progressive-research"
+      ]
     }
   ]
 }

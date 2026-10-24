@@ -1,0 +1,13 @@
+{
+  "name": "gpt-progressive-research",
+  "version": "1.0.0",
+  "description": "渐进式与建设性科研推进：拓展 idea 增量价值、穿透检查创新性、避免过度纠结细节并优先提供最小改动的建设性解决方案。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/gpt-progressive-research",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["gpt-progressive-research", "research", "idea-development", "novelty-check"],
+  "skills": "./skills"
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "渐进式与建设性科研推进"
+  short_description: "拓展科研 idea 增量价值、深度检查创新性、避免纠结细枝末节并提供建设性解法"
+  default_prompt: "使用 $gpt-progressive-research 协助拓展研究思路、评估创新性并建设性推进当前科研方案。"
+policy:
+  allow_implicit_invocation: true

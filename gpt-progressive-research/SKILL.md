@@ -1,0 +1,1 @@
+skills/gpt-progressive-research/SKILL.md

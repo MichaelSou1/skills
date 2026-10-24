@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage` 和 `open-workspace`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage`、`open-workspace`、`kml-ssh-proxy` 和 `gpt-progressive-research`。
 
 ## paper-reading（论文精读）
 
@@ -196,3 +196,26 @@ $open-workspace
 
 - KML 代理默认排除 `internal,.internal`，同步 `no_proxy` 与 `NO_PROXY`；保留原有排除项，并提供 curl 直连对照验证。
 - 独立包：[kml-ssh-proxy 1.0.1 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-ssh-proxy-v1.0.1/kml-ssh-proxy-1.0.1.zip)，同一 Release 提供 SHA256。
+
+
+## gpt-progressive-research（渐进式与建设性科研推进）
+
+用于克服大模型在科研辅助中常见的四大顽疾：因相似工作而过度防御否定、仅凭表面相似断定创新性不足、在构思期过度纠结细枝末节，以及只反复挑刺而不给低成本推进方案。
+
+- **拓展 idea 的思路**：聚焦明确的新增价值与演进空间，拒绝因已有相似工作就提前泼冷水否定。
+- **检查 idea 的创新性**：穿透调研近邻工作机制与局限，提炼有说服力的差异表述与验证方案；若核心高度重合则明确指出重合点与差异化调整方向，不强行造新。
+- **避免过度纠结细枝末节**：按研究阶段（构思期 vs 落地方案期）与问题重要性（致命伤 vs 局部参数/边缘情况）合理分配分析深度。
+- **从反复质疑转向建设性解决问题**：区分根本性缺陷与局部不足，遵循“最小改动原则”提供可执行改进方案，禁止对已解决的问题翻旧账，每轮收敛出核心待解问题与下一步工作。
+- 主入口：[SKILL.md](gpt-progressive-research/skills/gpt-progressive-research/SKILL.md)。支持用户显式调用与模型在科研讨论中自动匹配。
+
+### Claude Code
+
+```text
+/plugin marketplace add MichaelSou1/skills
+/plugin install gpt-progressive-research@michaelsou-skills
+/gpt-progressive-research:gpt-progressive-research
+```
+
+### Codex
+
+调用 `$skill-installer`，指定仓库 `MichaelSou1/skills`、技能子路径 `gpt-progressive-research/skills/gpt-progressive-research`。安装后可使用 `$gpt-progressive-research` 显式调用，或在讨论科研 idea 时自动触发。
