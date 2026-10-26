@@ -158,8 +158,8 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 仓库版本：1.0.8，包含自主同步、GPU/API 自主使用授权，以及长时间 GPU 作业轮询与监控自检规则。
-- 独立包：[open-workspace 1.0.8 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.8/open-workspace-1.0.8.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。包含自主 GitHub/服务器同步、GPU/API 自主使用授权，以及长时间 GPU 作业的轮询与监控自检要求；轮询间隔按预计持续时长确定。
+- 仓库版本：1.0.9，包含自主同步、GPU/API 自主使用授权，以及长任务后台等待与定时轮询规则。
+- 独立包：[open-workspace 1.0.9 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.9/open-workspace-1.0.9.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。包含自主 GitHub/服务器同步、GPU/API 自主使用授权，以及长任务（GPU 训练与评测、数据采集等）后台等待时的定时轮询要求：优先用 harness 循环定时任务，无则 `sleep` 后唤醒。
 
 调用示例：
 
