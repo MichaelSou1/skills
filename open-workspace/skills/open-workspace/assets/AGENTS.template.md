@@ -63,12 +63,34 @@
 **本项目必须使用 conda 管理环境依赖**，在项目运行时根的 `envs/` 下创建隔离 conda prefix；不得以 venv、uv 环境或系统 Python 替代。确有需要时可在该 conda 环境内使用 pip 补充依赖，但仍须由同一项目 conda Python 执行。
 明确记录 conda prefix 与项目 Python 的绝对路径，成套锁定 Python、框架、wheel 和 kernel 依赖；环境尚未创建时注明待建立，不因写入本约定就自动安装环境。
 将 `CONDARC`、`CONDA_PKGS_DIRS`、`CONDA_ENVS_PATH` 与安装缓存导向允许目录，核查用户环境注册；多进程及 worker 核对实际 conda Python，避免继承其他项目的 site-packages。
-下载前核对空间、网络与版本，优先断点续传，记录 revision、清单、数量、字节数和必要校验；不把代理地址或凭据写死进仓库。
+下载前核对空间、网络与版本，优先断点续传，记录 revision、清单、数量、字节数和必要校验；不把代理凭据或未经用户指定的代理地址写死进仓库；下方 KML 专节中用户指定的无凭据代理命令可保留在 AGENTS。
 代码、配置、锁文件、manifest、小型指标、预测、失败分析与成本记录入 Git；模型、原始大数据、checkpoint、大日志和完整批量轨迹留在运行时根。
 manifest 关联来源、精确版本、生成 commit、命令、产物位置与恢复方法，不能因产物被 ignore 就丢弃实验记录。
 清理唯一大产物前先完成可恢复备份并核对数量、字节与必要校验，记录保留策略和 `BACKED_UP.md`；不复用其他项目的备份账号或目录。
 
 <!-- BEGIN KML -->
+### KML 服务器网络代理设置
+
+按访问目标选择国内代理或海外代理；需要直连时取消代理。以下命令仅影响执行命令的 shell 及其后续子进程，不表示服务器已启用代理。工作区初始化只写入配置，不自动切换代理或修改 shell 启动文件；实际使用前核验连通性，worker 进程按需显式设置，不假定 launcher 的环境会自动传递。
+
+国内代理：
+
+```bash
+export http_proxy=http\://10.66.28.231:11080 https_proxy=http\://10.66.28.231:11080 no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou.com,test.gifshow\.com,staging.kuaishou.com
+```
+
+海外代理：
+
+```bash
+export http_proxy=http\://oversea-squid1.jp.txyun:11080 https_proxy=http\://oversea-squid1.jp.txyun:11080 no_proxy=localhost,127.0.0.1,localaddress,localdomain.com,internal,corp.kuaishou.com,test.gifshow\.com,staging.kuaishou.com
+```
+
+取消代理：
+
+```bash
+unset -v http_proxy https_proxy no_proxy
+```
+
 ### KML 存储与 GPU 技能
 
 KML 工作区放在 `/mmu_vlm_hdd/home/rhsu/playground/{{project_name}}`，运行时放在同一根下的 `{{project_name}}-data`；所有项目写入保持在该允许根内。
