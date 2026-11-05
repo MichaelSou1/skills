@@ -68,7 +68,7 @@ deploy key 提供 Git 传输权限，不提供 GitHub API 登录。所有 GitHub
 5. 在此私有目录写仓库专用 SSH config 和 GitHub known_hosts；通过 GitHub 官方公开指纹等可信来源核实 host key。关键设置是 `IdentityFile` 指向专属私钥、`IdentityAgent none`、`IdentitiesOnly yes`、`BatchMode yes`、`StrictHostKeyChecking yes`、`UserKnownHostsFile` 指向项目私有文件；强制使用该 key，不回退个人 SSH agent 或账号凭据。保留其他项目/平台配置，不改全局文件。
 6. 仓库级 `git config core.sshCommand` 指向该 SSH config；remote 使用 `git@github.com:<owner>/<project>.git` 或经过核验的独立 GitHub alias。配置包含允许的实际绝对路径，worker 不默认继承 launcher 的缓存或代理环境。
 7. 常规端口不可达时，可在项目私有 config 使用 `ssh.github.com:443`；HTTP(S) 代理只用现场已验证通道，记录无凭据摘要，不把代理地址硬编码进代码。不能通过关闭主机校验排障。
-8. 用远端无 `gh` 登录的 Git 进程执行 fetch/`ls-remote`，确认读取可用；核对 `read_only=false`。最终由 launcher 提交真实的资源/部署文档改动并正常 push，再读取 GitHub ref 验证该提交，才作为实际写入证据。不制造测试 commit 或临时 branch，不 force push。up-to-date/dry-run push 仅记录连接检查，不冒充已经写入远端；不能把 SSH“认证成功但不提供 shell”的退出码直接当 Git 失败。
+8. 用远端无 `gh` 登录的 Git 进程执行 fetch/`ls-remote`，确认读取可用；核对 `read_only=false`。最终由 launcher 提交真实的资源/部署文档改动并正常 push，再读取 GitHub ref 验证该提交，才作为实际写入证据。不制造测试 commit，不创建或使用临时分支，不 force push。up-to-date/dry-run push 仅记录连接检查，不冒充已经写入远端；不能把 SSH“认证成功但不提供 shell”的退出码直接当 Git 失败。
 
 记录 key ID、公开指纹、仓库、服务器、私钥存放路径和读写验证时间，不记录私钥内容。网络暂时失败保留已生成配置与 key ID，基础设施重试最多 2 次，先核对已完成状态；不靠连续生成 key 解决网络问题。只有声明权限和读取证据时写“声明读写权限已核、Git 读取成功、实际写入待验”，不能宣称远端可以 push。交接时提示 key 生命周期：撤销创建它的 token/App 后，该 key 可能被删除，按 [gh 官方说明](https://cli.github.com/manual/gh_repo_deploy-key_add) 重新核查。
 
@@ -77,6 +77,6 @@ deploy key 提供 Git 传输权限，不提供 GitHub API 登录。所有 GitHub
 新 AGENTS 必须写明及时、自主提交、推送 GitHub，并同时同步已指定服务器。后续每个可验收工作包通过必要检查后，按以下规则同步，不等待用户再次提醒；用户明确限制某一步时按该范围执行。活动作业占用共享 checkout 时暂缓改动该 checkout，保留现场并报告未同步版本与恢复动作。
 
 1. 将连接路径、资源表、credential 使用入口写入 AGENTS；私有 SSH/key 文件留运行时。若项目公开过文档，重新检查资源信息适不适合 Git 收录，不混入凭据。
-2. 选择唯一提交端。优先在 launcher 补齐 AGENTS 的真实部署/资源信息，本机审阅差异后由 launcher 提交推送，核实 deploy key 的真实写入；本机检查 clean working tree 和相同 branch，再 fetch/pull `--ff-only`。若最终提交在本机完成则反向同步，远端写入状态按实际证据报告。有修改或分叉先保留，不能强制覆盖。
-3. 比较本机 `git rev-parse HEAD`、GitHub `refs/heads/<branch>` 与远端 HEAD，并核对两端 `git status --short`；本机/远端提交应串行完成，避免竞争。
+2. 所有写入、提交和推送只允许发生在仓库主分支，不创建、切换到或推送新分支。优先在 launcher 的主分支补齐 AGENTS 的真实部署/资源信息，本机审阅差异后由 launcher 提交推送，核实 deploy key 的真实写入；本机检查 clean working tree 和相同主分支，再 fetch/pull `--ff-only`。若最终提交在本机完成则反向同步，远端写入状态按实际证据报告。本机和服务器串行同步；有修改或分叉先保留，不能强制覆盖，也不能新建分支绕过。
+3. 比较本机 `git rev-parse HEAD`、GitHub 主分支 `refs/heads/<default_branch>` 与远端 HEAD，并核对两端 `git status --short`；本机/远端提交应串行完成，避免竞争。
 4. 交付中说明实际代码版本、private 可见性、远端部署与 key 验证、调查范围、未知节点和未验证的执行环境。完成 bootstrap 后不自动启动后续研究作业。

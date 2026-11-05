@@ -158,8 +158,8 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 仓库版本：1.0.11，新增正式评测和训练验证期间的阶段性状态汇报与异常及时处置规则；保留 KML 代理、自主同步、GPU/API 自主使用授权，以及长任务后台等待与定时轮询规则。
-- 独立包：[open-workspace 1.0.11 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.11/open-workspace-1.0.11.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。包含自主 GitHub/服务器同步、GPU/API 自主使用授权、长任务定时轮询，以及正式评测和训练验证期间对正确率、测试进度、ETA 与异常的阶段性汇报和及时处置要求。
+- 仓库版本：1.0.12，新增主分支独占写入规则：只允许在主分支修改、提交、推送和同步，禁止创建、切换到或推送新分支；并保留 KML 代理、自主同步、GPU/API 自主使用授权、长任务定时轮询及评测状态汇报规则。
+- 独立包：[open-workspace 1.0.12 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.12/open-workspace-1.0.12.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。
 
 调用示例：
 
