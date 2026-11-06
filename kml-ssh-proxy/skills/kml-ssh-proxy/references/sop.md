@@ -2,7 +2,11 @@
 
 适用工具：`/Users/suruihan/dev/kml-remote-helper`。
 
-目标：通过 `ssh kml-<name>` 连接指定实例、执行命令并取回输出与退出状态，支持文件上传和下载，并按任务需要自动设置海外代理。底层可使用连接复用、代理、WebSocket 或 WebShell 桥接，沿用可用的连接与认证方式。
+目标：通过 `ssh kml-<name>` 连接指定实例、执行命令并取回输出与退出状态，支持文件上传和下载，并按任务需要自动设置海外代理。底层可使用连接复用、代理、WebSocket 转发，沿用可用的连接与认证方式。
+
+## 通道限制
+
+WebShell 执行、传输和桥接通道全部禁用。只使用 SSH 别名及其文件传输方式。下文 helper 初始化涉及 WebShell 或浏览器认证的步骤不可执行；无法通过已有 SSH 完成时报告阻塞原因。不得自动打开浏览器、刷新 SSO 或调用 `add`、`update-server`、`login` 触发认证。
 
 ## 0. 默认先复用已有连接
 
@@ -92,7 +96,7 @@ KML_HTTP_PROXY=http://oversea-squid1.jp.txyun:11080 \
   "$KML" add <name> <开发机ID或URL> --project <项目ID>
 ```
 
-helper 会创建本机 SSH 配置、实例脚本目录、隧道配置，并通过目标 WebShell 安装公钥和启动远端转发守护。需要 SSO 时，在打开的浏览器中完成一键登录或 KIM 验证，再继续。
+helper 初始化依赖 WebShell，当前禁用策略下不执行上述 `add` 命令。已有 SSH 路径可用时，通过 SSH 安装公钥和维护转发；否则报告无法初始化。
 
 配置后检查 `~/dev/relay/kml-ws/<name>/env.sh` 中的项目、记录、Pod、容器。看到 `is ready` 后，按第 6 节确认别名可执行命令与传输文件；已有实际操作结果可直接作为证据。
 
@@ -100,8 +104,8 @@ helper 会创建本机 SSH 配置、实例脚本目录、隧道配置，并通�
 
 ### 3.1 同时配置 launcher 到全部 worker 的免密连接
 
-1. 从该运行记录的实例列表取得全部 worker 的 Pod、主机名和 IP；分别通过 worker 的 WebShell 查询 `$SSHD_PORT`，并核对监听端口。
-2. 先复用 launcher 到目标 worker 的可用认证方式。需要配置公钥时，优先使用 launcher 已有的 `/root/.ssh/id_rsa`，通过实际专用端口测试。若密钥确实未获授权，通过对应 worker 的 WebShell 将 launcher 的公钥加入其 `authorized_keys`，保留已有内容。私钥留在 launcher。
+1. 从该运行记录的实例列表取得全部 worker 的 Pod、主机名和 IP；分别通过已有 SSH 查询 `$SSHD_PORT`，并核对监听端口。
+2. 先复用 launcher 到目标 worker 的可用认证方式。需要配置公钥时，优先使用 launcher 已有的 `/root/.ssh/id_rsa`，通过实际专用端口测试。若密钥确实未获授权，通过已有 SSH 将 launcher 的公钥加入其 `authorized_keys`，保留已有内容。私钥留在 launcher。
 3. 备份 launcher 的 `/root/.ssh/config`，为每个 worker 写入独立配置块：包含 `worker-<编号>`、`kml-w<编号>`、其真实 `gpuN` 别名、IP 和完整主机名；设置 `HostName`、实际 `Port` 与 `User root`。公钥方式按需设置 `IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`，已有可用认证配置直接沿用。
 4. 按 `/etc/hosts` 核对 `gpuN` 与 worker 的对应关系。**gpu 编号不一定等于 worker 编号加一。** 对已有同名配置先核对并替换，避免 OpenSSH 优先使用旧块中的端口。不要直接追加互相冲突的 Host 块。
 5. 在 launcher 上使用配置后的快捷名称逐台执行 `ssh worker-<编号> hostname` 和 `ssh gpuN hostname`，核对返回的主机名。不能仅验证带 `-p` 参数的命令后就交付。
@@ -126,63 +130,9 @@ Host worker-0 kml-w0 gpu1 10.48.50.22 aiplatform-wlf3-ge99-12.idchb2az3.hb2.kwai
 
 此示例的 IP、端口和 gpu 映射只适用于该记录，配置新记录时必须重新核对。launcher 上的 `kml-w0` 是远端 SSH 别名，与本机 `~/.ssh/config` 中的同名别名属于不同配置，不能混用。
 
-## 4. launcher 故障：独立配置 worker
+## 4. launcher 故障时的 worker 连接
 
-此方式经目标 worker 的 KML WebShell 转发 SSH，不经过 launcher。每个 worker 使用独立别名、脚本目录和 `KML_POD_NAME`。
-
-### 4.1 核对 worker 并安装公钥
-
-打开该 worker 自己的 WebShell，执行：
-
-```bash
-hostname
-printf 'SSHD_PORT=%s\n' "$SSHD_PORT"
-ss -ltnp
-```
-
-本机执行 `cat ~/.ssh/id_ed25519_kml.pub`，将输出的一整行公钥替换下面占位符，在目标 worker 的 WebShell 执行：
-
-```bash
-mkdir -p /root/.ssh
-chmod 700 /root/.ssh
-touch /root/.ssh/authorized_keys
-cp -p /root/.ssh/authorized_keys /root/.ssh/authorized_keys.before-kml-local
-key='替换为本机公钥完整一行'
-if ! grep -Fqx "$key" /root/.ssh/authorized_keys; then
-  printf '\n%s\n' "$key" >> /root/.ssh/authorized_keys
-fi
-chmod 600 /root/.ssh/authorized_keys
-```
-
-然后在该 worker 的 WebShell 执行第 5 节的代理配置。
-
-### 4.2 生成本机配置并切换到 WebShell 模式
-
-如果 launcher 已故障，普通记录解析可能无法通过 Running launcher 检查。可以使用底层生成器。下例采用曾实际配置过的记录，使用前必须替换成目标记录的真实数据：
-
-```bash
-KML_HTTP_PROXY=http://oversea-squid1.jp.txyun:11080 \
-  /Users/suruihan/dev/kml-remote-helper/resources/scripts/kml-add-machine \
-  w0 \
-  'wss://kml-task-100041666-record-100841521-prod-tensorboard.kce-aip-wlf1-hb2az1.corp.kuaishou.com/dtmachine-100841521'
-```
-
-生成器创建 `kml-w0` 并自动选择本机端口。随后编辑 `~/dev/relay/kml-ws/w0/env.sh`，将 `KML_TUNNEL_MODE` 改成 `webshell`，补齐或替换以下字段，不保留冲突的重复定义：
-
-```bash
-export KML_TUNNEL_MODE='webshell'
-export KML_PROJECT_ID='10278'
-export KML_CREATOR='suruihan'
-export KML_CLUSTER_NAME='kce-aip-wlf1-hb2az1'
-export KML_NAMESPACE='kubekml'
-export KML_POD_NAME='kml-task-100041666-record-100841521-prod-worker-0'
-export KML_CONTAINER_NAME='kaiv2'
-export KML_TARGET_PORT='21048'
-```
-
-上面的 `21048` 是该旧实例的端口，不能套用到新记录。WebShell 模式实际使用 Pod 和 `KML_TARGET_PORT` 建立连接；生成器保存的 `KML_WS_URL` 不作为该模式的传输入口。
-
-对 worker-1 等实例重复操作，分别使用 `w1` 等名称、对应 Pod 与实际端口。WebShell 模式依赖有效的企业 SSO；首次连接可能打开浏览器，启动速度通常比普通 WebSocket 隧道慢。
+只使用已有独立 worker SSH 别名或可用 SSH 路径。没有可用路径时报告阻塞原因，禁止切换 WebShell 模式。
 
 ## 5. 在目标实例配置自动代理
 
@@ -197,7 +147,7 @@ export NO_PROXY="$no_proxy"
 
 只配置本次指定的实例。先读取环境与两个配置文件，合并已有的 `no_proxy` / `NO_PROXY` 排除项。下方脚本从当前环境保留代理地址和排除项；若文件中还有未加载的自定义项，先加入 `values`。检查旧代理赋值的位置，清理已确认的重复赋值，避免后续覆盖。复杂条件或动态赋值应按原意手动合并。
 
-以下脚本在远端以 root 执行，可通过已经可用的 SSH 或该实例自己的 WebShell 执行。它备份并更新 `/etc/environment`，在 `/root/.bashrc` 的提前返回语句之前加入代理设置：
+以下脚本在远端以 root 执行，可通过已经可用的 SSH 执行。它备份并更新 `/etc/environment`，在 `/root/.bashrc` 的提前返回语句之前加入代理设置：
 
 ```bash
 python3 - <<'PY'
@@ -280,7 +230,7 @@ for node in worker-0 worker-1 worker-2; do
 done
 ```
 
-再逐台验证配置的 `gpuN` 快捷名称，允许复用连接。每个 worker 还应具备上述双向文件传输能力，已有实际传输结果可复用。若某个 worker 已故障或无法通过 WebShell 配置，应明确列出该实例和失败原因，不将整组连接标记为已完成。
+再逐台验证配置的 `gpuN` 快捷名称，允许复用连接。每个 worker 还应具备上述双向文件传输能力，已有实际传输结果可复用。若某个 worker 已故障或没有可用 SSH 路径，应明确列出该实例和失败原因，不将整组连接标记为已完成。
 
 若要确认代理网络可用，可在远端执行 `curl -I --connect-timeout 10 --max-time 20 https://huggingface.co`。环境变量存在只证明已配置，网络连通性以实际请求为准。
 
@@ -309,17 +259,17 @@ done
 "$KML" doctor <name>         # 检查本机配置
 ```
 
-该守护保障当前容器中的转发子进程恢复；守护自身被终止、容器被删除或重建时，需要重新启动或配置。转发退出会中断已有 SSH 会话，服务恢复后需重连。WebShell 模式则为每条 SSH 连接建立自己的桥接进程，无需在 worker 上部署 launcher 的 WebSocket 服务。
+该守护保障当前容器中的转发子进程恢复；守护自身被终止、容器被删除或重建时，需要重新启动或配置。转发退出会中断已有 SSH 会话，服务恢复后需重连。
 
 | 现象 | 排查与处理 |
 | --- | --- |
-| `Unauthorized` / HTTP 401 | 核对项目 ID、账号权限及 SSO；打开目标项目与记录页完成登录后重试 |
+| `Unauthorized` / HTTP 401 | 报告认证失效，不自动刷新 SSO 或打开浏览器 |
 | HTTP 502 / SSH 握手关闭 | 检查目标实例是否存活，以及远端转发进程、端口和守护日志 |
 | `Permission denied (publickey)` | 核对实际 Pod、SSH 端口、客户端密钥及该实例的 `authorized_keys`，或恢复已有可用认证方式 |
 | 本机端口被占用 | 用 `lsof -nP -iTCP:<端口> -sTCP:LISTEN` 和 `ps -p <PID> -o args=` 确认归属，处理已确认的旧隧道进程 |
 | `gpu1` 等别名登录失败 | 核对它的 IP、端口及密钥；使用已核对的实例地址与专用 SSH 端口 |
 | 新会话无代理 | 检查远端 `/etc/environment` 与 `.bashrc`；仅本机 `SetEnv` 不足以保证生效 |
-| launcher 故障而 worker 存活 | 使用第 4 节对 worker 单独配置；先验证该 worker 的 WebShell 可用 |
+| launcher 故障而 worker 存活 | 使用第 4 节已有独立 SSH 路径 |
 
 ## 8. 替换或移除旧别名
 

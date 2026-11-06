@@ -5,11 +5,15 @@ description: 配置或修复 KML 开发机、训练运行记录及指定 worker 
 
 # KML SSH 别名与自动代理
 
-完成标准是 SSH 别名能连接指定机器、执行命令、取回输出与退出状态，并能上传和下载文件。自动化任务应能使用已有凭据运行，无需逐次手动输入密码。底层可使用连接复用、代理、WebSocket 或 WebShell 桥接，沿用能用的连接与认证方式。
+完成标准是 SSH 别名能连接指定机器、执行命令、取回输出与退出状态，并能上传和下载文件。自动化任务应能使用已有凭据运行，无需逐次手动输入密码。底层可使用连接复用、代理、WebSocket 转发，沿用能用的连接与认证方式。
 
 文件传输可使用 `scp`、`rsync` 或 SSH 标准输入/输出，按任务选用一种可用方式。已有实际操作结果可直接作为对应能力的证据；日常复用只验证任务所需能力，新建或整体重配时确认命令执行与双向文件传输。
 
 优先复用已有 SSH 别名；只有连接失败、目标绑定不符、别名不存在或用户明确要求新建/重新配置时，才进入配置或排障流程。
+
+## 通道限制
+
+禁用 WebShell 通道，包括直接执行命令、文件传输、SSH 桥接和失败后的备用回退。只使用 `ssh 别名` 与对应文件传输命令。SSH 失败时排查本机配置、现有隧道和可用 SSH 路径；无法恢复就报告具体错误。不得直接调用 WebShell 客户端、切换 `KML_TUNNEL_MODE=webshell`，或自动打开浏览器、刷新 SSO、触发身份认证。helper 的 `add`、`update-server`、`login` 涉及上述操作时也不执行；需要这些操作才能继续时，报告阻塞原因。
 
 ## 默认入口：已有连接快速复用
 
@@ -58,14 +62,14 @@ NO_PROXY=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,cor
 
 1. 查看现有别名和生成目录，先备份将修改的 SSH 配置，核对实际 KML 记录状态。
 2. 正常开发机或 launcher 使用 helper 的 `add` 与 `update-server` 流程。普通 WebSocket 转发由记录专属守护管理，不能用广泛 `pkill` 停掉其他记录。
-3. launcher 故障而 worker 存活时，采用 worker 自己的 WebShell 模式，设置该 worker 的 `KML_POD_NAME` 和实测 `KML_TARGET_PORT`。此连接不能依赖已故障 launcher 的中转。
-4. 401 或登录过期时核对项目、账号权限和 SSO。保留有效浏览器会话；登录按钮可能显示中文“一键登录”或英文“One-Click Login”。涉及扫码或人工认证时等待用户完成认证，不声称配置已通过。不要持续重复会清空登录状态的操作；同样的失败再次出现时检查具体失败层或换用 SOP 中保留会话的路径。
+3. launcher 故障而 worker 存活时，只使用已有的独立 worker SSH 别名或可用 SSH 路径；没有可用路径时报告连接受阻。
+4. 401 或登录过期时报告认证失效，不自动打开浏览器或刷新 SSO。
 5. 502、握手关闭和 `Permission denied` 分别检查实例/桥接服务、端口、身份与密钥。若本机端口被占用，先核实进程命令和归属，再清理确认属于旧隧道的进程。不要把所有登录失败解释成缺少公钥。
 6. 不输出 cookie、SSO token 或私钥。安装公钥保留远端现有 `authorized_keys`；已有 KML 密钥能用时不必另造或分发私钥。
 
 ## launcher 到 worker：新建或重新配置时的必需项
 
-- 按选定记录枚举全部 worker，从每个实例的 WebShell 或服务信息核对 IP、主机名和 SSH 端口。
+- 按选定记录枚举全部 worker，从已有 SSH 连接或服务信息核对 IP、主机名和 SSH 端口。
 - 优先复用 launcher 到目标 worker 的可用认证方式。需要配置公钥时，使用 launcher 已有 `/root/.ssh/id_rsa`，先测试实际专用端口。确实缺授权时，只将 launcher 的公钥添加到对应 worker。
 - 在 launcher 的 `/root/.ssh/config` 为每个 worker 配置 `worker-N`、`kml-wN`、实际 `gpuN` 别名、IP 与完整主机名，指定实际 `HostName`、`Port` 与 `User`。公钥方式按需设置 `IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`；已有可用认证配置直接沿用。使用带运行记录 ID 的标记块，保留其他 Host，处理冲突的旧块。
 - `gpuN` 映射以该 launcher 的 `/etc/hosts` 与实例身份为准，不能假定 gpu 编号等于 worker 编号加一。SSH 默认 22 端口通常不是 KML 容器专用端口。
@@ -84,6 +88,6 @@ NO_PROXY=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,cor
 
 含 worker 的 launcher 配置需全部 worker 和快捷名称通过验收。失败实例明确报告原因，不能将整组标记为成功。
 
-持久性描述限定到实际机制：普通 WebSocket 守护能重启当前容器内退出的转发子进程；守护自身退出、容器销毁或重建仍需恢复配置，已有 SSH 会话也需重连。WebShell 模式按每条连接创建桥接，并依赖有效 SSO。
+持久性描述限定到实际机制：普通 WebSocket 守护能重启当前容器内退出的转发子进程；守护自身退出、容器销毁或重建仍需恢复配置，已有 SSH 会话也需重连。
 
 最终简要给出本机 SSH 命令、绑定运行记录与实例、代理验证结果，以及 launcher 内各 worker 的命令和映射。报告当前实测结果，标明未验证的部分。

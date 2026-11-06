@@ -1,7 +1,7 @@
 {
   "name": "kml-ssh-proxy",
-  "version": "1.0.2",
-  "description": "KML SSH 别名与自动代理：以远程命令和双向文件传输可用为准，复用已有连接与认证，按需配置和排障。",
+  "version": "1.0.3",
+  "description": "KML SSH 别名与自动代理：仅使用 SSH，禁用 WebShell 执行、传输、桥接及回退，禁止自动触发浏览器认证。",
   "author": {
     "name": "Ruihan Su",
     "url": "https://github.com/MichaelSou1"
