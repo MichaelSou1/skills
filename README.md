@@ -158,8 +158,8 @@ $kml-gpu-usage 检查本次 KML 资源，定位训练瓶颈并实施任务范围
 - Codex 安装路径：`open-workspace/skills/open-workspace`；安装后手动调用 `$open-workspace`。
 - Claude：`/plugin install open-workspace@michaelsou-skills`，然后手动调用 `/open-workspace:open-workspace`。
 - 两端禁止模型自动调用：Codex `policy.allow_implicit_invocation: false`；Claude `disable-model-invocation: true`。
-- 仓库版本：1.0.13，要求所有脚本的参数配置在使用时通过命令行参数传入，不得写死在脚本中。
-- 独立包：[open-workspace 1.0.13 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.13/open-workspace-1.0.13.zip)。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。
+- 仓库版本：1.0.14，要求所有脚本的参数配置在使用时通过命令行参数传入，不得写死在脚本中。
+- 独立包：[open-workspace 1.0.14 ZIP](https://github.com/MichaelSou1/skills/releases/download/open-workspace-v1.0.14/open-workspace-1.0.14.zip)。ZIP 根目录为 `open-workspace/`，直接包含 `SKILL.md`、`agents/`、`assets/` 和 `references/`。
 
 调用示例：
 
