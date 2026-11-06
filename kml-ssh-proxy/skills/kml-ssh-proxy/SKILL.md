@@ -1,9 +1,13 @@
 ---
 name: kml-ssh-proxy
-description: 配置或修复 KML 开发机、训练运行记录及指定 worker 的本机免密 SSH 与登录时自动海外代理。适用于“把这个配成 kml-xxxx”、KML SSH 断连、launcher 到 worker 登录失败；已有别名优先快速复用；新建或重新配置 launcher 时同时配好该记录全部 worker。仅涉及 GPU 作业调度或吞吐优化时不使用。
+description: 配置或修复 KML 开发机、训练运行记录及指定 worker 的 SSH 别名、远程命令、文件传输与自动海外代理。适用于“把这个配成 kml-xxxx”、KML SSH 断连、launcher 到 worker 登录失败；已有别名优先快速复用；新建或重新配置 launcher 时同时配好该记录全部 worker。仅涉及 GPU 作业调度或吞吐优化时不使用。
 ---
 
-# KML 免密 SSH 与自动代理
+# KML SSH 别名与自动代理
+
+完成标准是 SSH 别名能连接指定机器、执行命令、取回输出与退出状态，并能上传和下载文件。自动化任务应能使用已有凭据运行，无需逐次手动输入密码。底层可使用连接复用、代理、WebSocket 或 WebShell 桥接，沿用能用的连接与认证方式。
+
+文件传输可使用 `scp`、`rsync` 或 SSH 标准输入/输出，按任务选用一种可用方式。已有实际操作结果可直接作为对应能力的证据；日常复用只验证任务所需能力，新建或整体重配时确认命令执行与双向文件传输。
 
 优先复用已有 SSH 别名；只有连接失败、目标绑定不符、别名不存在或用户明确要求新建/重新配置时，才进入配置或排障流程。
 
@@ -48,7 +52,7 @@ NO_PROXY=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,cor
 
 `.internal` 是域名后缀，使用 `internal,.internal`，不写 `*.internal`。保留现有排除项，并让 `no_proxy` 与 `NO_PROXY` 一致。直接使用 IP 的请求需单独配置 IP 或客户端支持的 CIDR。仅修改直连规则时，保持现有 HTTP/HTTPS 代理地址，只处理指定实例；配置和对照验证见 SOP 第 5–6 节。
 
-`KML_HTTP_PROXY` 控制生成的本机 SSH `SetEnv`，但远端可能不接受这些变量。还需在每台本次配置的目标实例更新 `/etc/environment` 与 `/root/.bashrc`，保留原有内容并备份；`.bashrc` 的代理块置于提前返回语句之前。用新的非交互式和交互式 SSH 会话验证。
+`KML_HTTP_PROXY` 控制生成的本机 SSH `SetEnv`，但远端可能不接受这些变量。还需在每台本次配置的目标实例更新 `/etc/environment` 与 `/root/.bashrc`，保留原有内容并备份；`.bashrc` 的代理块置于提前返回语句之前。更新后通过任务实际使用的远程命令或交互式 shell 验证，可复用已有 SSH 连接。
 
 ## 配置与排障决策
 
@@ -62,17 +66,21 @@ NO_PROXY=localhost,127.0.0.1,localaddress,localdomain.com,internal,.internal,cor
 ## launcher 到 worker：新建或重新配置时的必需项
 
 - 按选定记录枚举全部 worker，从每个实例的 WebShell 或服务信息核对 IP、主机名和 SSH 端口。
-- 优先使用 launcher 已有 `/root/.ssh/id_rsa`，先测试实际专用端口。确实缺授权时，只将 launcher 的公钥添加到对应 worker。
-- 在 launcher 的 `/root/.ssh/config` 为每个 worker 配置 `worker-N`、`kml-wN`、实际 `gpuN` 别名、IP 与完整主机名，明确指定 `HostName`、`Port`、`User`、`IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`。使用带运行记录 ID 的标记块，保留其他 Host，处理冲突的旧块。
+- 优先复用 launcher 到目标 worker 的可用认证方式。需要配置公钥时，使用 launcher 已有 `/root/.ssh/id_rsa`，先测试实际专用端口。确实缺授权时，只将 launcher 的公钥添加到对应 worker。
+- 在 launcher 的 `/root/.ssh/config` 为每个 worker 配置 `worker-N`、`kml-wN`、实际 `gpuN` 别名、IP 与完整主机名，指定实际 `HostName`、`Port` 与 `User`。公钥方式按需设置 `IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`；已有可用认证配置直接沿用。使用带运行记录 ID 的标记块，保留其他 Host，处理冲突的旧块。
 - `gpuN` 映射以该 launcher 的 `/etc/hosts` 与实例身份为准，不能假定 gpu 编号等于 worker 编号加一。SSH 默认 22 端口通常不是 KML 容器专用端口。
-- 对每个 `worker-N` 和对应 `gpuN`，使用新连接、公钥认证执行 `hostname`。只测试带 `-p` 的命令不足以证明快捷别名配置完成。
+- 对每个 `worker-N` 和对应 `gpuN`，通过别名执行 `hostname`，允许复用连接与已有认证。只测试带 `-p` 的命令不足以证明快捷别名配置完成。
 - launcher 内的 `kml-wN` 与本机同名别名属于不同 SSH 配置。交付时明确命令在哪台机器执行。
 
 ## 验收与交付
 
 快速复用仅简要报告连接可用并继续任务，不补齐下述配置验收清单。以下要求用于本次新建或修改的配置；局部修复仅验收受影响的部分。
 
-使用 `BatchMode=yes`、`ControlMaster=no`、`ControlPath=none` 新建 SSH 连接，核对返回主机名与目标实例，并检查 `http_proxy`、`https_proxy`、`no_proxy` 和 `NO_PROXY`。密码登录不算免密完成，环境变量存在也不代表代理请求已成功；用户需要网络可用性时实际请求验证。
+通过实际使用的 `ssh 别名 命令` 核对目标与命令结果，允许连接复用、现有桥接与认证方式。仅在排查连接复用掩盖配置变更等具体故障时，才禁用复用或要求新连接。
+
+新建或整体重配时，用任务文件或小型临时文件确认上传和下载，核对取回内容即可；已有成功的双向传输直接作为证据。传输失败只修复所需传输方式，不要求同时通过 `scp`、`rsync` 与 SFTP。
+
+本次配置或修复代理时，检查 `http_proxy`、`https_proxy`、`no_proxy` 和 `NO_PROXY`。网络可用性以任务所需的实际请求为准；只在任务需要交互式 shell 时检查该 shell。
 
 含 worker 的 launcher 配置需全部 worker 和快捷名称通过验收。失败实例明确报告原因，不能将整组标记为成功。
 

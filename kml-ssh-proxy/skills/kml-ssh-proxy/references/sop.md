@@ -1,8 +1,8 @@
-# KML 本机免密 SSH 与自动海外代理 SOP
+# KML SSH 别名与自动海外代理 SOP
 
-适用工具：`/Users/suruihan/dev/kml-remote-helper`。本文根据实际配置整理，更新于 2026-10-18。
+适用工具：`/Users/suruihan/dev/kml-remote-helper`。
 
-目标：使用 `ssh kml-<name>` 登录指定开发机或训练实例，并在新 SSH 会话中自动设置海外代理。
+目标：通过 `ssh kml-<name>` 连接指定实例、执行命令并取回输出与退出状态，支持文件上传和下载，并按任务需要自动设置海外代理。底层可使用连接复用、代理、WebSocket 或 WebShell 桥接，沿用可用的连接与认证方式。
 
 ## 0. 默认先复用已有连接
 
@@ -94,15 +94,15 @@ KML_HTTP_PROXY=http://oversea-squid1.jp.txyun:11080 \
 
 helper 会创建本机 SSH 配置、实例脚本目录、隧道配置，并通过目标 WebShell 安装公钥和启动远端转发守护。需要 SSO 时，在打开的浏览器中完成一键登录或 KIM 验证，再继续。
 
-配置后检查 `~/dev/relay/kml-ws/<name>/env.sh` 中的项目、记录、Pod、容器。看到 `is ready` 后仍执行第 6 节的独立验证。
+配置后检查 `~/dev/relay/kml-ws/<name>/env.sh` 中的项目、记录、Pod、容器。看到 `is ready` 后，按第 6 节确认别名可执行命令与传输文件；已有实际操作结果可直接作为证据。
 
 **本机 `SetEnv` 不能保证远端接收代理变量。还必须执行第 5 节的远端环境配置。**
 
 ### 3.1 同时配置 launcher 到全部 worker 的免密连接
 
 1. 从该运行记录的实例列表取得全部 worker 的 Pod、主机名和 IP；分别通过 worker 的 WebShell 查询 `$SSHD_PORT`，并核对监听端口。
-2. 在 launcher 检查 SSH 密钥。KML 镜像通常已有 `/root/.ssh/id_rsa`，优先使用现有密钥，通过实际专用端口逐台测试公钥登录。若密钥确实未获授权，通过对应 worker 的 WebShell 将 **launcher 的公钥** 加入其 `authorized_keys`，保留已有内容。私钥留在 launcher。
-3. 备份 launcher 的 `/root/.ssh/config`，为每个 worker 写入独立配置块：包含 `worker-<编号>`、`kml-w<编号>`、其真实 `gpuN` 别名、IP 和完整主机名；明确设置 `HostName`、实际 `Port`、`User root`、`IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`。
+2. 先复用 launcher 到目标 worker 的可用认证方式。需要配置公钥时，优先使用 launcher 已有的 `/root/.ssh/id_rsa`，通过实际专用端口测试。若密钥确实未获授权，通过对应 worker 的 WebShell 将 launcher 的公钥加入其 `authorized_keys`，保留已有内容。私钥留在 launcher。
+3. 备份 launcher 的 `/root/.ssh/config`，为每个 worker 写入独立配置块：包含 `worker-<编号>`、`kml-w<编号>`、其真实 `gpuN` 别名、IP 和完整主机名；设置 `HostName`、实际 `Port` 与 `User root`。公钥方式按需设置 `IdentityFile`、`IdentitiesOnly yes` 与 `BatchMode yes`，已有可用认证配置直接沿用。
 4. 按 `/etc/hosts` 核对 `gpuN` 与 worker 的对应关系。**gpu 编号不一定等于 worker 编号加一。** 对已有同名配置先核对并替换，避免 OpenSSH 优先使用旧块中的端口。不要直接追加互相冲突的 Host 块。
 5. 在 launcher 上使用配置后的快捷名称逐台执行 `ssh worker-<编号> hostname` 和 `ssh gpuN hostname`，核对返回的主机名。不能仅验证带 `-p` 参数的命令后就交付。
 
@@ -247,19 +247,28 @@ path.write_text(block + original)
 PY
 ```
 
-已打开的 SSH 会话不会自动刷新环境。关闭后新建连接进行验证；若新会话仍缺变量，检查 sshd 的 PAM 环境加载和 shell 启动文件。
+已打开的 shell 不会自动刷新环境。通过别名执行新的远程命令，或按任务需要打开交互式 shell 验证，允许复用 SSH 连接。若仍缺变量，检查 sshd 的 PAM 环境加载和 shell 启动文件。
 
 ## 6. 新建或修改配置后的验收
 
-仅对本次新建或修改的配置禁用连接复用，避免已有 ControlMaster 掩盖配置问题。已有连接快速复用不执行本节，局部修复不触发整组验收；通过后停止检查：
+验收以别名的实际能力为准。允许连接复用、现有桥接与认证方式；仅在排查连接复用掩盖配置变更等具体故障时禁用复用。已有连接快速复用不执行本节，局部修复只验收受影响部分；通过后停止检查。
+
+通过别名执行命令，核对返回主机名、输出与退出状态。示例：
 
 ```bash
-ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none \
-  -o ConnectTimeout=30 kml-<name> \
-  'hostname; whoami; printenv http_proxy https_proxy no_proxy NO_PROXY'
+ssh -o BatchMode=yes -o ConnectTimeout=30 kml-<name> hostname
 ```
 
-验收条件：公钥登录成功、不要求密码；`hostname` 与目标实例一致；HTTP/HTTPS 代理地址符合预期，`no_proxy` 与 `NO_PROXY` 一致且包含原有排除项与 `internal,.internal`。交互式 shell 也检查这四个变量，确认后续启动文件未覆盖设置。
+自动化任务应能使用已有凭据运行，无需逐次手动输入密码。无需限定为公钥认证，也无需为验收另建交互式会话。
+
+新建或整体重配时，用任务文件或小型临时文件完成一次上传和下载，核对取回内容即可。已有实际双向传输结果可直接作为证据。可选择 `scp`、`rsync` 或 SSH 标准输入/输出，使用一种可用方式即可；不要求同时支持全部传输工具。`scp` 示例：
+
+```bash
+scp /本机/任务文件 kml-<name>:/远端/目录/
+scp kml-<name>:/远端/目录/任务文件 /本机/取回目录/
+```
+
+本次配置或修复代理时，通过别名执行 `printenv http_proxy https_proxy no_proxy NO_PROXY`。HTTP/HTTPS 代理地址应符合预期，`no_proxy` 与 `NO_PROXY` 一致，保留原有排除项与 `internal,.internal`。只在任务需要交互式 shell 时检查该 shell。
 
 **新建或重新配置含 worker 的整组 launcher 连接时，还必须通过 launcher 到全部 worker 的验收。** 在 launcher 上执行以下命令，并将名称列表替换为该记录全部 worker：
 
@@ -267,18 +276,17 @@ ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none \
 set -e
 for node in worker-0 worker-1 worker-2; do
   printf '%s -> ' "$node"
-  ssh -n -o BatchMode=yes -o ControlMaster=no -o ControlPath=none \
-    -o ConnectTimeout=10 "$node" hostname
+  ssh -n -o BatchMode=yes -o ConnectTimeout=10 "$node" hostname
 done
 ```
 
-再逐台验证配置的 `gpuN` 快捷名称。每次必须使用新连接；全部返回正确主机名且无需密码才算完成。若某个 worker 已故障或无法通过 WebShell 配置，应明确列出该实例和失败原因，不将整组连接标记为已完成。
+再逐台验证配置的 `gpuN` 快捷名称，允许复用连接。每个 worker 还应具备上述双向文件传输能力，已有实际传输结果可复用。若某个 worker 已故障或无法通过 WebShell 配置，应明确列出该实例和失败原因，不将整组连接标记为已完成。
 
 若要确认代理网络可用，可在远端执行 `curl -I --connect-timeout 10 --max-time 20 https://huggingface.co`。环境变量存在只证明已配置，网络连通性以实际请求为准。
 
 ### 6.1 修改 `.internal` 直连规则后的对照验证
 
-在新的 SSH 会话中运行 curl 对照测试：用临时本地 HTTP 服务监听 `127.0.0.1` 的随机端口，以 `--resolve` 将一个 `.internal` 测试域名映射到该服务。命令显式指定不可用的本地代理，例如 `--proxy http://127.0.0.1:1`（先确认该端口未监听），保留会话中的 `no_proxy` / `NO_PROXY`，不传 `--noproxy`。
+通过别名执行新的远程命令运行 curl 对照测试，允许复用 SSH 连接。用临时本地 HTTP 服务监听 `127.0.0.1` 的随机端口，以 `--resolve` 将一个 `.internal` 测试域名映射到该服务。命令显式指定不可用的本地代理，例如 `--proxy http://127.0.0.1:1`（先确认该端口未监听），保留会话中的 `no_proxy` / `NO_PROXY`，不传 `--noproxy`。
 
 `.internal` 请求应直接返回本地服务响应。换成不在排除列表中的普通域名，使用同样的映射和代理，应出现代理连接失败。请求设置 `--max-time 5`，测试结束关闭临时服务。该对照证明 curl 按域名分流；内部 DNS、实际业务服务和其他客户端需以用户所用客户端的真实请求验证。
 
@@ -307,7 +315,7 @@ done
 | --- | --- |
 | `Unauthorized` / HTTP 401 | 核对项目 ID、账号权限及 SSO；打开目标项目与记录页完成登录后重试 |
 | HTTP 502 / SSH 握手关闭 | 检查目标实例是否存活，以及远端转发进程、端口和守护日志 |
-| `Permission denied (publickey)` | 核对实际 Pod、SSH 端口、客户端密钥及该实例的 `authorized_keys`；密码登录不算成功 |
+| `Permission denied (publickey)` | 核对实际 Pod、SSH 端口、客户端密钥及该实例的 `authorized_keys`，或恢复已有可用认证方式 |
 | 本机端口被占用 | 用 `lsof -nP -iTCP:<端口> -sTCP:LISTEN` 和 `ps -p <PID> -o args=` 确认归属，处理已确认的旧隧道进程 |
 | `gpu1` 等别名登录失败 | 核对它的 IP、端口及密钥；使用已核对的实例地址与专用 SSH 端口 |
 | 新会话无代理 | 检查远端 `/etc/environment` 与 `.bashrc`；仅本机 `SetEnv` 不足以保证生效 |

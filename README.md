@@ -185,9 +185,9 @@ $open-workspace
 
 调用示例：`$paper-archive 将这次论文精读归档到 Notion`。
 
-## kml-ssh-proxy（KML 免密 SSH 与代理）
+## kml-ssh-proxy（KML SSH 别名与代理）
 
-已有别名优先直接连接，成功即停止检查；仅连接失败、别名缺失、目标绑定冲突或明确要求新建/重新配置时，进入对应流程。局部修复只验收受影响部分，避免重复核验和扩大范围。
+以 SSH 别名能执行命令、取回结果并双向传输文件为完成标准，允许连接复用与现有桥接、认证方式。已有别名优先直接连接，成功即停止检查；仅连接失败、别名缺失、目标绑定冲突或明确要求新建/重新配置时，进入对应流程。局部修复只验收受影响部分，避免重复核验和扩大范围。
 
 - 主入口：[SKILL.md](kml-ssh-proxy/skills/kml-ssh-proxy/SKILL.md)。
 - Codex 安装路径：`kml-ssh-proxy/skills/kml-ssh-proxy`。
@@ -195,7 +195,7 @@ $open-workspace
 - 配置流程依赖本机已有的 `kml-remote-helper` 与企业 SSO；本仓库不包含该 helper。
 
 - KML 代理默认排除 `internal,.internal`，同步 `no_proxy` 与 `NO_PROXY`；保留原有排除项，并提供 curl 直连对照验证。
-- 独立包：[kml-ssh-proxy 1.0.1 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-ssh-proxy-v1.0.1/kml-ssh-proxy-1.0.1.zip)，同一 Release 提供 SHA256。
+- 独立包：[kml-ssh-proxy 1.0.2 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-ssh-proxy-v1.0.2/kml-ssh-proxy-1.0.2.zip)。
 
 
 ## gpt-progressive-research（渐进式与建设性科研推进）
