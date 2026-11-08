@@ -187,7 +187,7 @@ $open-workspace
 
 ## kml-ssh-proxy（KML SSH 别名与代理）
 
-以 SSH 别名能执行命令、取回结果并双向传输文件为完成标准，允许 SSH 连接复用；首次配置可通过 WebShell 初始化，日常使用 SSH，禁止自动触发浏览器认证。已有别名优先直接连接，成功即停止检查；仅连接失败、别名缺失、目标绑定冲突或明确要求新建/重新配置时，进入对应流程。局部修复只验收受影响部分，避免重复核验和扩大范围。
+新实例默认独立配置，使用目标实例自己的 KML 入口和隧道。配置请求包含自动打开浏览器、完成 SSO 和 WebShell 初始化的授权，无需重复确认，也不借用其他 KML 机器。已有别名优先直接连接，成功即停止检查；连接失败或重新绑定时，只处理受影响的部分。以 SSH 命令执行和双向文件传输为完成标准。
 
 - 主入口：[SKILL.md](kml-ssh-proxy/skills/kml-ssh-proxy/SKILL.md)。
 - Codex 安装路径：`kml-ssh-proxy/skills/kml-ssh-proxy`。
@@ -195,7 +195,6 @@ $open-workspace
 - 配置流程依赖本机已有的 `kml-remote-helper` 与企业 SSO；本仓库不包含该 helper。
 
 - KML 代理默认排除 `internal,.internal`，同步 `no_proxy` 与 `NO_PROXY`；保留原有排除项，并提供 curl 直连对照验证。
-- 独立包：[kml-ssh-proxy 1.0.4 ZIP](https://github.com/MichaelSou1/skills/releases/download/kml-ssh-proxy-v1.0.4/kml-ssh-proxy-1.0.4.zip)。
 
 
 ## gpt-progressive-research（渐进式与建设性科研推进）

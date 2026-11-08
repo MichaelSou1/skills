@@ -4,9 +4,9 @@
 
 目标：通过 `ssh kml-<name>` 连接指定实例、执行命令并取回输出与退出状态，支持文件上传和下载，并按任务需要自动设置海外代理。底层可使用连接复用、代理、WebSocket 转发，沿用可用的连接与认证方式。
 
-## 通道限制
+## 独立配置与认证授权
 
-首次配置新实例时，可通过 WebShell 完成初始化、文件传输和 SSH 桥接，并使用 helper 的 `add`、`update-server`。配置完成后，日常命令和传输使用 SSH，已有连接的排障不使用 WebShell 备用通道。沿用已有认证；不得自动打开浏览器、刷新 SSO 或触发身份认证，认证失效时报告具体原因。
+新实例直接使用目标实例自己的 KML 入口、隧道和认证缓存。按需运行 `add`、`update-server`、`login`，自动打开浏览器完成 SSO 和 WebShell 初始化。配置请求已包含这些步骤的授权，无需重复确认。完整规则见 [SKILL.md 的独立配置与认证授权](../SKILL.md#独立配置与认证授权)。
 
 ## 0. 默认先复用已有连接
 
@@ -96,7 +96,7 @@ KML_HTTP_PROXY=http://oversea-squid1.jp.txyun:11080 \
   "$KML" add <name> <开发机ID或URL> --project <项目ID>
 ```
 
-首次配置时可运行上述 `add` 命令，通过 WebShell 初始化 SSH；若已有认证失效，停止并报告认证问题。
+直接运行上述 `add` 命令。helper 会解析目标记录，创建独立的本机 SSH 配置和隧道目录，通过目标 WebShell 安装公钥并启动转发守护。按需自动打开浏览器完成 SSO；需要扫码或设备确认时，请用户完成该操作后继续。无需让用户手动复制初始化命令，也无需借用其他 KML 机器。
 
 配置后检查 `~/dev/relay/kml-ws/<name>/env.sh` 中的项目、记录、Pod、容器。看到 `is ready` 后，按第 6 节确认别名可执行命令与传输文件；已有实际操作结果可直接作为证据。
 
@@ -263,7 +263,7 @@ done
 
 | 现象 | 排查与处理 |
 | --- | --- |
-| `Unauthorized` / HTTP 401 | 报告认证失效，不自动刷新 SSO 或打开浏览器 |
+| `Unauthorized` / HTTP 401 | 自动运行目标别名的 `login`，打开浏览器并完成 SSO；需人工验证时请用户完成具体操作，认证仍失败时报告错误 |
 | HTTP 502 / SSH 握手关闭 | 检查目标实例是否存活，以及远端转发进程、端口和守护日志 |
 | `Permission denied (publickey)` | 核对实际 Pod、SSH 端口、客户端密钥及该实例的 `authorized_keys`，或恢复已有可用认证方式 |
 | 本机端口被占用 | 用 `lsof -nP -iTCP:<端口> -sTCP:LISTEN` 和 `ps -p <PID> -o args=` 确认归属，处理已确认的旧隧道进程 |
