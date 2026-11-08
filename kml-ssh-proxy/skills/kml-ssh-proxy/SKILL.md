@@ -13,7 +13,7 @@ description: 配置或修复 KML 开发机、训练运行记录及指定 worker 
 
 ## 通道限制
 
-禁用 WebShell 通道，包括直接执行命令、文件传输、SSH 桥接和失败后的备用回退。只使用 `ssh 别名` 与对应文件传输命令。SSH 失败时排查本机配置、现有隧道和可用 SSH 路径；无法恢复就报告具体错误。不得直接调用 WebShell 客户端、切换 `KML_TUNNEL_MODE=webshell`，或自动打开浏览器、刷新 SSO、触发身份认证。helper 的 `add`、`update-server`、`login` 涉及上述操作时也不执行；需要这些操作才能继续时，报告阻塞原因。
+首次配置新实例时，允许通过 WebShell 执行初始化和建立 SSH 桥接，包括使用 helper 的 `add`、`update-server`。SSH 配置完成后，日常命令和文件传输使用 SSH；已有连接的排障不以 WebShell 作为备用通道。沿用已有认证，不自动打开浏览器、刷新 SSO 或触发身份认证；认证失效时报告具体原因。
 
 ## 默认入口：已有连接快速复用
 

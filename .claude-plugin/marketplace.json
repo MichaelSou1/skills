@@ -122,8 +122,8 @@
     {
       "name": "kml-ssh-proxy",
       "source": "./kml-ssh-proxy",
-      "description": "KML SSH 别名与自动代理：仅使用 SSH，禁用 WebShell 执行、传输、桥接及回退，禁止自动触发浏览器认证。",
-      "version": "1.0.3",
+      "description": "KML SSH 别名与自动代理：首次配置允许通过 WebShell 初始化，日常使用 SSH。",
+      "version": "1.0.4",
       "author": {
         "name": "Ruihan Su",
         "url": "https://github.com/MichaelSou1"

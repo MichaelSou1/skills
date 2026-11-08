@@ -6,7 +6,7 @@
 
 ## 通道限制
 
-WebShell 执行、传输和桥接通道全部禁用。只使用 SSH 别名及其文件传输方式。下文 helper 初始化涉及 WebShell 或浏览器认证的步骤不可执行；无法通过已有 SSH 完成时报告阻塞原因。不得自动打开浏览器、刷新 SSO 或调用 `add`、`update-server`、`login` 触发认证。
+首次配置新实例时，可通过 WebShell 完成初始化、文件传输和 SSH 桥接，并使用 helper 的 `add`、`update-server`。配置完成后，日常命令和传输使用 SSH，已有连接的排障不使用 WebShell 备用通道。沿用已有认证；不得自动打开浏览器、刷新 SSO 或触发身份认证，认证失效时报告具体原因。
 
 ## 0. 默认先复用已有连接
 
@@ -96,7 +96,7 @@ KML_HTTP_PROXY=http://oversea-squid1.jp.txyun:11080 \
   "$KML" add <name> <开发机ID或URL> --project <项目ID>
 ```
 
-helper 初始化依赖 WebShell，当前禁用策略下不执行上述 `add` 命令。已有 SSH 路径可用时，通过 SSH 安装公钥和维护转发；否则报告无法初始化。
+首次配置时可运行上述 `add` 命令，通过 WebShell 初始化 SSH；若已有认证失效，停止并报告认证问题。
 
 配置后检查 `~/dev/relay/kml-ws/<name>/env.sh` 中的项目、记录、Pod、容器。看到 `is ready` 后，按第 6 节确认别名可执行命令与传输文件；已有实际操作结果可直接作为证据。
 
