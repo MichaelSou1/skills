@@ -1,0 +1,13 @@
+{
+  "name": "natural-english-writing",
+  "version": "1.0.0",
+  "description": "英文自然写作：改善论文和技术文本的可读性，保留专业术语、研究主张与作者语气。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/natural-english-writing",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["english", "academic-writing", "natural-writing", "readability"],
+  "skills": "./skills"
+}

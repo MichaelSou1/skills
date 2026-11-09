@@ -136,6 +136,22 @@
       ]
     },
     {
+      "name": "natural-english-writing",
+      "source": "./natural-english-writing",
+      "description": "英文自然写作：改善论文和技术文本的可读性，保留专业术语、研究主张与作者语气。支持用户显式调用与模型自动匹配。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/natural-english-writing",
+      "strict": false,
+      "skills": [
+        "./skills/natural-english-writing"
+      ]
+    },
+    {
       "name": "gpt-progressive-research",
       "source": "./gpt-progressive-research",
       "description": "渐进式与建设性科研推进：拓展 idea 增量价值、深度检查创新性、避免过度纠结细枝末节，并优先提供最小改动的建设性解决方案。",

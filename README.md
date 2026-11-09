@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage`、`open-workspace`、`kml-ssh-proxy` 和 `gpt-progressive-research`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage`、`open-workspace`、`kml-ssh-proxy`、`gpt-progressive-research` 和 `natural-english-writing`。
 
 ## paper-reading（论文精读）
 
@@ -219,3 +219,12 @@ $open-workspace
 ### Codex
 
 调用 `$skill-installer`，指定仓库 `MichaelSou1/skills`、技能子路径 `gpt-progressive-research/skills/gpt-progressive-research`。安装后可使用 `$gpt-progressive-research` 显式调用，或在讨论科研 idea 时自动触发。
+
+## natural-english-writing（英文自然写作）
+
+帮助英文论文、技术文档和其他英文文本写得自然易读。关注长距离句法依赖、名词堆叠、连接词省略、生硬的名词动词化、拟人表达和不自然的词语搭配，同时保留技术术语、研究主张、数据和作者语气。
+
+- 主入口：[SKILL.md](natural-english-writing/skills/natural-english-writing/SKILL.md)。支持用户显式调用与模型自动匹配。
+- Codex：通过 `$skill-installer` 安装仓库 `MichaelSou1/skills` 中的 `natural-english-writing/skills/natural-english-writing`，使用 `$natural-english-writing` 调用。
+- Claude：`/plugin install natural-english-writing@michaelsou-skills`。
+- 独立包：[natural-english-writing 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/natural-english-writing-v1.0.0/natural-english-writing-1.0.0.zip)。ZIP 根目录为 `natural-english-writing/`，直接包含 `SKILL.md` 和 `agents/`。
