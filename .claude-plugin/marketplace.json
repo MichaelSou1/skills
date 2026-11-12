@@ -166,6 +166,22 @@
       "skills": [
         "./skills/gpt-progressive-research"
       ]
+    },
+    {
+      "name": "academic-paper-craft",
+      "source": "./academic-paper-craft",
+      "description": "学术论文叙事与防 AI 痕迹规范：贯彻学术发布会原则、主张证据闭环、图注独立自检、修改举证责任与 LaTeX 去 vibe 指纹。支持用户显式调用与模型自动匹配。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ruihan Su",
+        "url": "https://github.com/MichaelSou1"
+      },
+      "category": "productivity",
+      "homepage": "https://github.com/MichaelSou1/skills/tree/main/academic-paper-craft",
+      "strict": false,
+      "skills": [
+        "./skills/academic-paper-craft"
+      ]
     }
   ]
 }

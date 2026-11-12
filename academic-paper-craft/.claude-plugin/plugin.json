@@ -1,0 +1,13 @@
+{
+  "name": "academic-paper-craft",
+  "version": "1.0.0",
+  "description": "学术论文叙事与防 AI 痕迹规范：贯彻学术发布会原则、主张证据闭环、图注独立自检、修改举证责任与 LaTeX 去 vibe 指纹。",
+  "author": {
+    "name": "Ruihan Su",
+    "url": "https://github.com/MichaelSou1"
+  },
+  "homepage": "https://github.com/MichaelSou1/skills/tree/main/academic-paper-craft",
+  "repository": "https://github.com/MichaelSou1/skills",
+  "keywords": ["academic-writing", "anti-vibe-paper", "peer-review", "narrative-framing", "latex", "ml-conferences"],
+  "skills": "./skills"
+}

@@ -9,7 +9,7 @@ Personal skills collection for Claude and Codex.
 - GitHub 仓库：`MichaelSou1/skills`
 - 或：`/plugin marketplace add MichaelSou1/skills`
 
-识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage`、`open-workspace`、`kml-ssh-proxy`、`gpt-progressive-research` 和 `natural-english-writing`。
+识别所需的清单文件在 `.claude-plugin/marketplace.json`。导入后可安装 `paper-archive`、`paper-reading`、`unpack`、`professor-research`、`write-experiment-plan`、`kml-gpu-usage`、`open-workspace`、`kml-ssh-proxy`、`gpt-progressive-research`、`natural-english-writing` 和 `academic-paper-craft`。
 
 ## paper-reading（论文精读）
 
@@ -228,3 +228,12 @@ $open-workspace
 - Codex：通过 `$skill-installer` 安装仓库 `MichaelSou1/skills` 中的 `natural-english-writing/skills/natural-english-writing`，使用 `$natural-english-writing` 调用。
 - Claude：`/plugin install natural-english-writing@michaelsou-skills`。
 - 独立包：[natural-english-writing 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/natural-english-writing-v1.0.0/natural-english-writing-1.0.0.zip)。ZIP 根目录为 `natural-english-writing/`，直接包含 `SKILL.md` 和 `agents/`。
+
+## academic-paper-craft（学术论文叙事与去 AI 味）
+
+面向机器学习与人工智能顶会（CVPR、ICCV、ECCV、NeurIPS、ICML、ICLR、ACL、EMNLP、COLM）的论文撰写、修改与防 AI 痕迹（anti-vibe-paper）审校规范。覆盖“学术发布会原则”主线建构、主张与证据逐项映射、不理想指标与消融口径重构、图注遮正文独立自检、LaTeX 排版与标点句式黑名单，以及重大修改前的《修改请求报告》（举证责任）与全文一致性审校。
+
+- 主入口：[SKILL.md](academic-paper-craft/skills/academic-paper-craft/SKILL.md)。支持用户显式调用与模型自动匹配。
+- Codex：通过 `$skill-installer` 安装仓库 `MichaelSou1/skills` 中的 `academic-paper-craft/skills/academic-paper-craft`，使用 `$academic-paper-craft` 调用。
+- Claude：`/plugin install academic-paper-craft@michaelsou-skills`。
+- 独立包：[academic-paper-craft 1.0.0 ZIP](https://github.com/MichaelSou1/skills/releases/download/academic-paper-craft-v1.0.0/academic-paper-craft-1.0.0.zip)，同一 Release 提供 SHA256。ZIP 根目录为 `academic-paper-craft/`，直接包含 `SKILL.md` 和 `agents/`。

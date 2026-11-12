@@ -1,0 +1,6 @@
+interface:
+  display_name: "学术论文叙事与去 AI 味"
+  short_description: "Draft, revise, and audit ML papers with strong thesis alignment and zero AI tells"
+  default_prompt: "使用 $academic-paper-craft 撰写、修改或审校当前学术论文草稿，确保主线清晰、证据闭环且无 AI 写作痕迹。"
+policy:
+  allow_implicit_invocation: true
